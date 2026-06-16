@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Mike's App — Review Walkthrough</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Bebas+Neue&display=swap');
+
+:root {
+  --orange: #EF8B22;
+  --blue:   #0979C3;
+  --navy:   #1B3A5C;
+  --teal:   #0E8F84;
+  --ink:    #2A2A2A;
+  --gray:   #6B6B6B;
+  --light:  #F7F5F1;
+  --line:   #E5E1DA;
+  --white:  #fff;
+  --red:    #C53030;
+  --green:  #2E7D32;
+  --amber:  #B45309;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Roboto', -apple-system, sans-serif;
+  background: var(--light);
+  color: var(--ink);
+  line-height: 1.55;
+}
+
+/* ── Layout ── */
+.wrap {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 60px 36px 120px;
+}
+
+/* ── Section divider ── */
+.section {
+  margin-top: 64px;
+}
+.section:first-of-type {
+  margin-top: 0;
+}
+
+.section-eyebrow {
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  line-height: 1.05;
+  color: var(--navy);
+  margin-bottom: 16px;
+  letter-spacing: .5px;
+}
+
+.section-body {
+  font-size: .97rem;
+  color: var(--gray);
+  max-width: 820px;
+  line-height: 1.65;
+}
+
+.section-body strong { color: var(--ink); }
+
+hr.sep {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 52px 0;
+}
+
+/* ── Hero / Cover ── */
+.cover {
+  background: var(--navy);
+  color: var(--white);
+  padding: 52px 48px 48px;
+  border-radius: 16px;
+  margin-bottom: 64px;
+  position: relative;
+  overflow: hidden;
+}
+.cover::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(135deg, transparent, rgba(239,139,34,.15));
+  pointer-events: none;
+}
+.cover-eyebrow {
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.55);
+  margin-bottom: 16px;
+}
+.cover h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.6rem;
+  line-height: 1;
+  letter-spacing: 1px;
+  color: var(--white);
+  margin-bottom: 16px;
+}
+.cover-lede {
+  font-size: 1.08rem;
+  color: rgba(255,255,255,.75);
+  max-width: 680px;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+.cover-stats {
+  display: flex;
+  gap: 36px;
+  flex-wrap: wrap;
+  border-top: 1px solid rgba(255,255,255,.18);
+  padding-top: 24px;
+  margin-top: 24px;
+}
+.cover-stat-val {
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--orange);
+  line-height: 1;
+}
+.cover-stat-label {
+  font-size: .78rem;
+  color: rgba(255,255,255,.55);
+  margin-top: 4px;
+}
+.cover-grade {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  background: var(--teal);
+  border-radius: 10px;
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--white);
+  font-family: 'Bebas Neue', sans-serif;
+  margin-bottom: 6px;
+}
+
+/* ── Stage diagram ── */
+.stages {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 20px 0 12px;
+}
+.stage-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px 16px;
+  position: relative;
+}
+.stage-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  color: var(--line);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.stage-name {
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.stage-items {
+  font-size: .78rem;
+  color: var(--gray);
+  line-height: 1.4;
+}
+.stage-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 20px;
+}
+.badge-green  { background: #DCFCE7; color: var(--green); }
+.badge-orange { background: #FEF3E2; color: var(--amber); }
+.badge-teal   { background: #CCFBF1; color: #0F766E; }
+.badge-blue   { background: #DBEAFE; color: #1D4ED8; }
+
+/* ── "Got Right" cards ── */
+.got-right-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 16px;
+}
+.got-right-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px 18px;
+  border-top: 3px solid var(--teal);
+}
+.got-right-card h4 {
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+.got-right-card p {
+  font-size: .82rem;
+  color: var(--gray);
+  line-height: 1.5;
+}
+
+/* ── Blockers list ── */
+.blockers {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+.blocker-row {
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  align-items: start;
+  gap: 14px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.blocker-row.critical {
+  border-left: 3px solid var(--red);
+}
+.blocker-row.important {
+  border-left: 3px solid var(--orange);
+}
+.blocker-index {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  color: var(--orange);
+  line-height: 1.1;
+  padding-top: 1px;
+}
+.blocker-text h4 {
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.blocker-text p {
+  font-size: .82rem;
+  color: var(--gray);
+  line-height: 1.45;
+}
+.blocker-effort {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  color: var(--teal);
+  white-space: nowrap;
+  padding-top: 2px;
+}
+
+/* ── Decision banner ── */
+.decision-banner {
+  background: var(--navy);
+  color: var(--white);
+  border-radius: 12px;
+  padding: 28px 32px;
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: center;
+}
+.decision-banner p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: rgba(255,255,255,.85);
+}
+.decision-banner p strong {
+  color: var(--orange);
+}
+.decision-badge {
+  background: var(--orange);
+  color: var(--white);
+  font-size: .75rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 10px 18px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+/* ── Module scorecard ── */
+.module-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+.module-row {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+.module-icon { font-size: 1.05rem; }
+.module-name {
+  font-size: .88rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+.module-status {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.s-built    { background: #DCFCE7; color: var(--green); }
+.s-half     { background: #FEF9C3; color: var(--amber); }
+.s-later    { background: var(--light); color: var(--gray); }
+
+/* ── Build phases ── */
+.phases {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+.phase-row {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+.phase-num-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+.phase-num {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--white);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.phase-connector {
+  width: 2px;
+  height: 32px;
+  background: var(--line);
+  margin: 4px auto 0;
+}
+.phase-content {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-top: 0;
+}
+.phase-content h4 {
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.phase-content p {
+  font-size: .85rem;
+  color: var(--gray);
+  line-height: 1.5;
+}
+.phase-content .phase-bridge {
+  margin-top: 8px;
+  font-size: .78rem;
+  color: var(--teal);
+  font-weight: 600;
+}
+.phase-row.p1 .phase-num { background: var(--orange); }
+.phase-row.p2 .phase-num { background: var(--teal); }
+.phase-row.p3 .phase-num { background: var(--blue); }
+.phase-row.p4 .phase-num { background: var(--navy); }
+
+/* ── Curriculum comparison ── */
+.curriculum-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+.curric-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px 20px;
+}
+.curric-card h4 {
+  font-size: .88rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.curric-card ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.curric-card li {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: 8px;
+  font-size: .83rem;
+  color: var(--gray);
+  line-height: 1.4;
+}
+.curric-card li .check { color: var(--green); font-size: .9rem; }
+.curric-card li .cross { color: var(--red); font-size: .9rem; }
+.curric-story {
+  margin-top: 16px;
+  background: #EFF9F8;
+  border: 1px solid #B2E0DB;
+  border-radius: 10px;
+  padding: 16px 18px;
+  font-size: .88rem;
+  color: var(--ink);
+  line-height: 1.55;
+}
+.curric-story strong { color: #0E8F84; }
+
+/* ── Questions ── */
+.questions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+.q-row {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 14px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.q-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3rem;
+  color: var(--orange);
+  line-height: 1.1;
+}
+.q-text {
+  font-size: .88rem;
+  color: var(--ink);
+  line-height: 1.5;
+}
+.q-text strong { color: var(--navy); }
+
+/* ── Next steps ── */
+.next-steps {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 16px;
+}
+.next-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+.next-card .who {
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 8px;
+}
+.next-card ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.next-card li {
+  font-size: .85rem;
+  color: var(--ink);
+  line-height: 1.45;
+  padding-left: 16px;
+  position: relative;
+}
+.next-card li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--orange);
+  font-size: .8rem;
+}
+
+/* ── Footer ── */
+.footer-bar {
+  margin-top: 80px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.footer-bar a {
+  display: inline-block;
+  background: var(--navy);
+  color: var(--white);
+  text-decoration: none;
+  font-size: .82rem;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 8px;
+}
+.footer-bar a:hover { background: #0F2840; }
+.footer-meta {
+  font-size: .78rem;
+  color: #bbb;
+}
+
+/* ── Responsive ── */
+@media (max-width: 820px) {
+  .stages            { grid-template-columns: repeat(2, 1fr); }
+  .got-right-grid    { grid-template-columns: 1fr 1fr; }
+  .curriculum-grid   { grid-template-columns: 1fr; }
+  .next-steps        { grid-template-columns: 1fr; }
+  .decision-banner   { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .wrap              { padding: 36px 20px 80px; }
+  .cover             { padding: 36px 28px; }
+  .cover h1          { font-size: 2.6rem; }
+  .stages            { grid-template-columns: 1fr; }
+  .got-right-grid    { grid-template-columns: 1fr; }
+  .blocker-row       { grid-template-columns: 28px 1fr; }
+  .blocker-effort    { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══════════════════════════
+       COVER
+  ══════════════════════════ -->
+  <div class="cover">
+    <div class="cover-eyebrow">Mover Training App · Review &amp; Roadmap · 6/2026</div>
+    <h1>Mike's App — What We Found, Where It Goes</h1>
+    <p class="cover-lede">This is the walkthrough for our debrief. We'll go section by section — what you built, what to fix before the pilot, and how this becomes the Mover Super App chassis.</p>
+    <div class="cover-stats">
+      <div>
+        <div class="cover-grade">B</div>
+        <div class="cover-stat-label">Code audit grade</div>
+      </div>
+      <div>
+        <div class="cover-stat-val">205</div>
+        <div class="cover-stat-label">Curriculum items seeded</div>
+      </div>
+      <div>
+        <div class="cover-stat-val">4</div>
+        <div class="cover-stat-label">Training stages built</div>
+      </div>
+      <div>
+        <div class="cover-stat-val">2-actor</div>
+        <div class="cover-stat-label">Server-enforced sign-off</div>
+      </div>
+      <div>
+        <div class="cover-stat-val">✓</div>
+        <div class="cover-stat-label">Real Postgres + API</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════
+       SECTION 1 — WHAT YOU BUILT
+  ══════════════════════════ -->
+  <div class="section">
+    <div class="section-eyebrow">Section 1 of 8</div>
+    <h2 class="section-title">What You Actually Built</h2>
+    <p class="section-body">This isn't a prototype. It's a <strong>Grade B real app</strong> — a PostgreSQL database, an Express API with Drizzle ORM, React screens with real routing, Clerk authentication, and a server-enforced two-actor sign-off. The Replit agent built four sequential gated training stages covering every phase of the mover development arc.</p>
+  </div>
+
+  <div class="stages">
+    <div class="stage-card">
+      <div class="stage-num">01</div>
+      <div class="stage-name">Onboarding Checklist</div>
+      <div class="stage-items">16 sections · ~60 items<br>Two-actor sign-off enforced<br>Manager-only gate items</div>
+      <span class="stage-badge badge-green">Server enforced</span>
+    </div>
+    <div class="stage-card">
+      <div class="stage-num">02</div>
+      <div class="stage-name">Onsite Evaluation</div>
+      <div class="stage-items">Perfect Move Checklist<br>Point-weighted + photos<br>Locks Stage 3 on pass</div>
+      <span class="stage-badge badge-teal">Graded</span>
+    </div>
+    <div class="stage-card">
+      <div class="stage-num">03</div>
+      <div class="stage-name">Mover Training (8 Sprints)</div>
+      <div class="stage-items">8 named sprints<br>Min-days per sprint<br>Sequential unlock</div>
+      <span class="stage-badge badge-orange">See P0.3</span>
+    </div>
+    <div class="stage-card">
+      <div class="stage-num">04</div>
+      <div class="stage-name">Lead Training</div>
+      <div class="stage-items">Prerequisites + sprints<br>Driver gate + Samsara<br>Career advancement gate</div>
+      <span class="stage-badge badge-blue">Career gate</span>
+    </div>
+  </div>
+
+  <p class="section-body" style="margin-top:16px;">Each stage is gated — you can't proceed until the prior stage clears. Stage 1 is the most complete: it has two-actor enforcement, manager-only checklist items, and a real progress table in Postgres. That pattern should extend to Stages 3 and 4 (more on that below).</p>
+
+
+  <hr class="sep">
+
+
+  <!-- ══════════════════════════
+       SECTION 2 — WHAT YOU GOT RIGHT
+  ══════════════════════════ -->
+  <div class="section">
+    <div class="section-eyebrow">Section 2 of 8</div>
+    <h2 class="section-title">Three Things You Got Right (That Most Get Wrong)</h2>
+    <p class="section-body">Most apps built this way have at least one of these wrong. You got all three right out of the box — and they're the hard ones.</p>
+  </div>
+
+  <div class="got-right-grid">
+    <div class="got-right-card">
+      <h4>Two-actor sign-off is server-enforced</h4>
+      <p>Manager marks "Trained," mover marks "Demonstrated." This isn't just UI — the server checks the actor before writing progress. The industry norm is UI-only with a bypass. Yours isn't. This is the gift to Anne's system.</p>
+    </div>
+    <div class="got-right-card">
+      <h4>Real database — not localStorage</h4>
+      <p>PostgreSQL with Drizzle ORM and a typed schema. Every sign-off is timestamped and auditable. This matters the moment you have two managers on the same mover — and you'll have that on day one of the pilot.</p>
+    </div>
+    <div class="got-right-card">
+      <h4>205 curriculum items — the actual content</h4>
+      <p>The digitized handbook, the Perfect Move Checklist, 8 named mover sprints. Anne's system defined the gates but explicitly left the content as a placeholder. You filled it. That's the whole story (more on this in Section 7).</p>
+    </div>
+  </div>
+
+  <p class="section-body" style="margin-top: 20px;">Also in the "got it right" column: the <code>.agents/memory/</code> folder — 12 decision docs the Replit agent wrote to itself. That's unusual and worth preserving. Tell the agent to keep doing it.</p>
+
+
+  <hr class="sep">
+
+
+  <!-- ══════════════════════════
+       SECTION 3 — BEFORE THE PILOT
+  ══════════════════════════ -->
+  <div class="section">
+    <div class="section-eyebrow">Section 3 of 8</div>
+    <h2 class="section-title">Before the Pilot — 5 Items</h2>
+    <p class="section-body">These are the P0 fixes — nothing ships to real trainees until all five are done. They're ordered by severity, not effort. The good news: most of them are one-session work for the Replit agent.</p>
+  </div>
+
+  <div class="blockers">
+    <div class="blocker-row critical">
+      <div class="blocker-index">1</div>
+      <div class="blocker-text">
+        <h4>Seed script wipe landmine — destroy-on-reseed</h4>
+        <p><code>lib/db/src/seed.ts</code> lines 547–549 delete ALL trainee progress before reseeding. The first time you edit the curriculum after go-live, every trainee's training record is wiped. Require an explicit <code>--wipe</code> flag for destructive mode; default should upsert by slug and never touch the progress table.</p>
+      </div>
+      <div class="blocker-effort">Most important</div>
+    </div>
+    <div class="blocker-row critical">
+      <div class="blocker-index">2</div>
+      <div class="blocker-text">
+        <h4>Sprint "MGMT sign-off" items are self-markable</h4>
+        <p>In Stage 3 (Mover Training), items titled "MGMT sign-off: …" are currently regular items — a trainee can mark them complete themselves. Two-actor integrity only covers Stage 1. Add a <code>managerOnly</code> boolean to the item schema, set it in seed for every sign-off item, and have the API return 403 when a trainee writes a manager-only item.</p>
+      </div>
+      <div class="blocker-effort">Integrity fix</div>
+    </div>
+    <div class="blocker-row important">
+      <div class="blocker-index">3</div>
+      <div class="blocker-text">
+        <h4>CORS is wide open — reflects any caller</h4>
+        <p><code>artifacts/api-server/src/app.ts</code> ~line 38: <code>origin: true</code> reflects any caller. With cookie auth, any website a logged-in user visits can call your API as them. Replace with an explicit allowlist (production origin + localhost dev). One line plus a small env-driven list.</p>
+      </div>
+      <div class="blocker-effort">One line</div>
+    </div>
+    <div class="blocker-row important">
+      <div class="blocker-index">4</div>
+      <div class="blocker-text">
+        <h4>New hires land on the scoreboard instead of training</h4>
+        <p><code>routeForUser()</code> in <code>App.tsx</code> ~line 165 sends trainees to <code>/games</code>. A day-1 new hire's first screen should be <code>/portal</code> ("Continue Learning"). One-line change — but it's the first impression for every hire.</p>
+      </div>
+      <div class="blocker-effort">One line</div>
+    </div>
+    <div class="blocker-row">
+      <div class="blocker-index">5</div>
+      <div class="blocker-text">
+        <h4>Small hardening batch (can be one agent session)</h4>
+        <p>Add a database index on <code>progress.userId</code> (every request scans this table today). Add <code>sandbox</code> attribute to iframes. Show "Last active X days ago" on the manager roster — the API already returns <code>lastActivityAt</code>, the UI just doesn't render it. Fix the recent-activity query that fetches 200 rows globally and filters in JS.</p>
+      </div>
+      <div class="blocker-effort">Batch session</div>
+    </div>
+  </div>
+
+  <p class="section-body" style="margin-top: 18px;">All five P0 items are written as paste-ready Replit agent tasks in the <strong>handover doc</strong>. Hand the agent all of P0 in one session — they're independent and small.</p>
+
+
+  <hr class="sep">
+
+
+  <!-- ══════════════════════════
+       SECTION 4 — THE BIG DECISION
+  ══════════════════════════ -->
+  <div class="section">
+    <div class="section-eyebrow">Section 4 of 8</div>
+    <h2 class="section-title">The Decision: This Is the Super App</h2>
+    <p class="section-body">Before the code review we had a concept — a 14-module "Mover Super App" mockup from 2025. The review changed the question. You already built the three hardest modules: login + roles + branching, a real database, and an API contract. Everything on that list is now "add a tab," not "start over."</p>
+  </div>
+
+  <div class="decision-banner">
+    <p><strong>Mike's training app is the Mover Super App.</strong> Not a module of it — the chassis it grows into. This call was locked 6/12/2026. Mike drives, Matisen consults when identity sync (EMMA/Rippling) starts, because that's where his world begins.</p>
+    <div class="decision-badge">Locked 6/12</div>
+  </div>
+
+  <div class="module-list" style="margin-top: 20px;">
+    <div class="module-row">
+      <div class="module-icon">✅</div>
+      <div class="module-name">Training Guide (staged skills, sign-offs, manager gates)</div>
+      <div class="module-status s-built">Built — deeper than the mockup</div>
+    </div>
+    <div class="module-row">
+      <div class="module-icon">✅</div>
+      <div class="module-name">Handbook / Code of Geniuses (searchable wiki)</div>
+      <div class="module-status s-built">Built</div>
+    </div>
+    <div class="module-row">
+      <div class="module-icon">✅</div>
+      <div class="module-name">Einstein Games (embedded, branch deep-links)</div>
+      <div class="module-status s-built">Built</div>
+    </div>
+    <div class="module-row">
+      <div class="module-icon">🟡</div>
+      <div class="module-name">Performance Stats (reviews, damages, attendance)</div>
+      <div class="module-status s-half">Half-built — Phase 2 target</div>
+    </div>
+    <div class="module-row">
+      <div class="module-icon">🔲</div>
+      <div class="module-name">Bonus Calculator — sliders showing how metrics move your bonus</div>
+      <div class="module-status s-later">Phase 3</div>
+    </div>
+    <div class="module-row">
+      <div class="module-icon">🔲</div>
+      <div class="module-name">Career Path (Copilot → Lead General trail, pay bands)</div>
+      <div class="module-status s-later">Phase 4</div>
+    </div>
+    <div class="module-row">
+      <div class="module-icon">🔲</div>
+      <div class="module-name">Badges + Streaks + Milestones</div>
+      <div class="module-status s-later">Phase 4</div>
+    </div>
+    <div class="module-row">
+      <div class="module-icon">⏸</div>
+      <div class="module-name">My Schedule (EMMA dispatch) + Ask Einstein (AI chat)</div>
+      <div class="module-status s-later">Parked — later</div>
+    </div>
+  </div>
+
+
+  <hr class="sep">
+
+
+  <!-- ══════════════════════════
+       SECTION 5 — BUILD ORDER
+  ══════════════════════════ -->
+  <div class="section">
+    <div class="section-eyebrow">Section 5 of 8</div>
+    <h2 class="section-title">Where It Goes From Here — 4 Phases</h2>
+    <p class="section-body">Each phase gates the next. Phase 1 is what makes this useful to a manager today. Don't start Phase 2 until Phase 1 is running clean for at least one pilot branch.</p>
+  </div>
+
+  <div class="phases">
+    <div class="phase-row p1">
+      <div class="phase-num-wrap">
+        <div class="phase-num">1</div>
+        <div class="phase-connector"></div>
+      </div>
+      <div class="phase-content">
+        <h4>Pace Tracking + Manager Command Center</h4>
+        <p>Days-in-stage vs. sprint minimums. "On pace / Behind" flags on the manager dashboard. Day-7 and Day-12 hooks for Anne's check-in cadence. The "stalled trainee" signal — and almost all the data is already there (timestamps on every sign-off). This is the manager-oversight promise the app already makes on its landing page.</p>
+        <div class="phase-bridge">Bridge to Anne's 60-day system — her gate spec IS the build spec for this phase.</div>
+      </div>
+    </div>
+    <div class="phase-row p2">
+      <div class="phase-num-wrap">
+        <div class="phase-num">2</div>
+        <div class="phase-connector"></div>
+      </div>
+      <div class="phase-content">
+        <h4>Full Performance Spine (Einstein Games Scorecard)</h4>
+        <p>Not just Samsara driving scores — the <em>full</em> Einstein Games scorecard: contract efficiency, reviews per hour, damages per hour, safety, attendance. One number is the 100-point composite. The manager's command center needs this spine to be useful — you can't show a dashboard that has sign-off progress but no performance signal.</p>
+        <div class="phase-bridge">Samsara replaces the manual driver-gate already in the app. The rest wires from the existing Games sheet.</div>
+      </div>
+    </div>
+    <div class="phase-row p3">
+      <div class="phase-num-wrap">
+        <div class="phase-num">3</div>
+        <div class="phase-connector"></div>
+      </div>
+      <div class="phase-content">
+        <h4>Bonus Calculator — the Mover WIFM</h4>
+        <p>The killer feature for mover adoption: sliders showing exactly how safety, hours, damages, and reviews move their bonus. Drill-down from the performance spine. Doesn't work until Phase 2 supplies the real data — but design it third so it lands on a proven app, not a pilot.</p>
+      </div>
+    </div>
+    <div class="phase-row p4">
+      <div class="phase-num-wrap">
+        <div class="phase-num">4</div>
+      </div>
+      <div class="phase-content">
+        <h4>Badges, Streaks, Career Path — the Retention Layer</h4>
+        <p>Auto-streaks (consecutive high-score weeks), peer/manager-selected badges, praise submissions that convert to milestones, quarterly theme recognition. Cheap to render once Phases 1–3 supply the data. Meaningless before then. Career path gate already exists in Lead Training as prerequisite checklists — it's closer than it looks.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-body" style="margin-top: 20px;">One standing constraint before Phase 2: <strong>identity is the tripwire.</strong> Today Clerk login + a hand-typed EMMA ID is fine for a pilot. It breaks at 400 movers and blocks every data-driven phase above. Before Phase 2 ships, Mike + Matisen need 30 minutes on "where does the mover roster come from" — likely EMMA or Rippling sync, keep Clerk for login only.</p>
+
+
+  <hr class="sep">
+
+
+  <!-- ══════════════════════════
+       SECTION 6 — CURRICULUM + ANNE
+  ══════════════════════════ -->
+  <div class="section">
+    <div class="section-eyebrow">Section 6 of 8</div>
+    <h2 class="section-title">You + Anne — Two Halves of One System</h2>
+    <p class="section-body">The worry going in was "Mike and Anne each wrote competing curricula — we have to reconcile them." That's not what happened. They built opposite halves and barely overlap.</p>
+  </div>
+
+  <div class="curriculum-grid">
+    <div class="curric-card">
+      <h4>Anne built: the <em>spine</em></h4>
+      <ul>
+        <li><span class="check">✓</span> Day 7 / 12 / 30 / 45 / 60 check-in cadence</li>
+        <li><span class="check">✓</span> 100-point overlay (92→PIP / 90→terminate)</li>
+        <li><span class="check">✓</span> Day-12 affirmative "keep" decision (default OUT)</li>
+        <li><span class="check">✓</span> Peer "truck question" — binary, story not score</li>
+        <li><span class="check">✓</span> Pass/separate — decoupled from benefits cliff</li>
+        <li><span class="cross">—</span> Curriculum content (explicit PLACEHOLDER)</li>
+        <li><span class="cross">—</span> Sprint content (9 milestones named, not written)</li>
+      </ul>
+    </div>
+    <div class="curric-card">
+      <h4>Mike built: the <em>content</em></h4>
+      <ul>
+        <li><span class="check">✓</span> 205 curriculum items — fully written</li>
+        <li><span class="check">✓</span> 8 named mover sprints + onboarding + lead</li>
+        <li><span class="check">✓</span> Two-actor sign-off (server-enforced — gift to Anne)</li>
+        <li><span class="cross">—</span> Check-in cadence (Day 7/12/30/45/60)</li>
+        <li><span class="cross">—</span> 100-point thresholds and gates</li>
+        <li><span class="cross">—</span> Pass/separate decision</li>
+        <li><span class="cross">—</span> "Truck question" peer survey</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="curric-story">
+    <strong>The merge isn't a fight — it's a docking maneuver.</strong> Mike's content slots into Anne's calendar. Anne's gates become the pace-tracking layer Mike's app is missing — which is already Phase 1 of the build order. Anne's gate spec literally IS the build spec for Phase 1. That's the cleanest possible outcome.
+  </div>
+
+  <p class="section-body" style="margin-top: 20px;">There's one real seam to settle: <strong>Mike's 8 sprints vs. Anne's "9 sprints."</strong> Anne's "9" is a count with no names — she never wrote what's in them. Mike's 4 stages (onboarding + onsite eval + 8 mover sprints + lead training) map to what Anne counted as 9 milestones across 60 days. The merge meeting locks the canonical list before both ship.</p>
+
+  <p class="section-body" style="margin-top: 12px;"><strong>Merge meeting sign-off: Cameron · Paul · Brian · Matisen · Anne</strong> (Anne back 6/19, Mike back 6/15). This should happen before the curriculum goes to a pilot branch.</p>
+
+
+  <hr class="sep">
+
+
+  <!-- ══════════════════════════
+       SECTION 7 — QUESTIONS FOR MIKE
+  ══════════════════════════ -->
+  <div class="section">
+    <div class="section-eyebrow">Section 7 of 8</div>
+    <h2 class="section-title">Questions We Need Your Read On</h2>
+    <p class="section-body">These aren't blockers — they're decisions only you and Brian can make. I want your read before we hand the Replit agent the P1 tasks.</p>
+  </div>
+
+  <div class="questions">
+    <div class="q-row">
+      <div class="q-num">1</div>
+      <div class="q-text"><strong>Field workflow:</strong> do managers mark checklist items <em>live in the field on a phone</em>, or <em>batch at end of day</em>? This shapes how far to push the quick-mark shortcut in Phase 1.1. Cameron explicitly wants your read on this one.</div>
+    </div>
+    <div class="q-row">
+      <div class="q-num">2</div>
+      <div class="q-text"><strong>Videos:</strong> every item has a <code>videoUrl</code> slot, already rendered by the UI. What's Austin L's plan and hosting approach — unlisted YouTube vs. Drive? The slot is ready; it's a content and hosting call.</div>
+    </div>
+    <div class="q-row">
+      <div class="q-num">3</div>
+      <div class="q-text"><strong>Pilot branch:</strong> which branch goes first, and who's your Brian sign-off contact there? Cameron's go-live bar is you + Brian confirming the 205 seeded items match current field practice.</div>
+    </div>
+    <div class="q-row">
+      <div class="q-num">4</div>
+      <div class="q-text"><strong>Eval-tracker wiring:</strong> you own both apps. Can you add URL-param support to the onsite eval tracker so this app can deep-link a mover directly? And should the Lead Training prerequisite (3 passing evals) pull from real data instead of manual logging?</div>
+    </div>
+    <div class="q-row">
+      <div class="q-num">5</div>
+      <div class="q-text"><strong>Sprint count:</strong> 8 mover sprints in your app vs. Anne's "9 handbook sprints." Before the merge meeting — what's your read on whether these are the same list or different scopes?</div>
+    </div>
+    <div class="q-row">
+      <div class="q-num">6</div>
+      <div class="q-text"><strong>Identity timeline:</strong> hand-typed EMMA ID is fine for the pilot. When does the EMMA API/MCP land (Matisen's track)? That's the gate for Phases 2–4. Worth a 30-minute Matisen sync before Phase 1 is done.</div>
+    </div>
+  </div>
+
+
+  <hr class="sep">
+
+
+  <!-- ══════════════════════════
+       SECTION 8 — NEXT STEPS
+  ══════════════════════════ -->
+  <div class="section">
+    <div class="section-eyebrow">Section 8 of 8</div>
+    <h2 class="section-title">What Happens Next</h2>
+    <p class="section-body">Two parallel tracks from here — Mike's agent fixes P0, Cameron + team locks the curriculum and the merge meeting.</p>
+  </div>
+
+  <div class="next-steps">
+    <div class="next-card">
+      <div class="who">Mike → Replit Agent</div>
+      <ul>
+        <li>Run P0 (all five items in one agent session — they're independent)</li>
+        <li>Start P1 quick-mark + field-size controls after you answer the field-workflow question</li>
+        <li>Brief Brian on the app + confirm pilot branch</li>
+        <li>Sync with Austin L on video hosting plan (the slot is ready)</li>
+        <li>Add URL-param support to the eval tracker so deep-linking works</li>
+      </ul>
+    </div>
+    <div class="next-card">
+      <div class="who">Cameron + Team</div>
+      <ul>
+        <li>Schedule the curriculum merge meeting (Mike back 6/15, Anne back 6/19)</li>
+        <li>Lock the 8-vs-9 sprint question before both systems ship</li>
+        <li>Confirm pilot branch + Brian as field-practice sign-off</li>
+        <li>Phase 1 design (pace tracking) before agent builds — loop Anne on the spec since her gate cadence IS the design</li>
+        <li>Schedule Mike + Matisen 30-min on identity sync before Phase 2</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="section-body" style="margin-top: 24px;">The full implementation plan — every P0/P1/P2 item written as Replit agent tasks — is in the <strong>handover doc</strong> linked below. Hand it to the agent session-by-session, not all at once.</p>
+
+
+  <!-- ══════════════════════════
+       FOOTER
+  ══════════════════════════ -->
+  <div class="footer-bar">
+    <div>
+      <a href="./index.html" target="_blank">Open Project HQ →</a>
+    </div>
+    <div class="footer-meta">Mover Training App Review &nbsp;·&nbsp; 6/2026 &nbsp;·&nbsp; Cameron / Albert</div>
+  </div>
+
+</div>
+</body>
+</html>
