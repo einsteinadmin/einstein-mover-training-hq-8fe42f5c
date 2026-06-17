@@ -1,0 +1,3841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mover Super App — Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ========== RESET & BASE ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body {
+  font-family: 'Roboto', sans-serif;
+  background: #F6F6F6;
+  color: #53575A;
+  overflow: hidden;
+  height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ========== BRAND TOKENS ========== */
+:root {
+  --orange: #EF8B22;
+  --gray: #53575A;
+  --blue: #0979C3;
+  --dark: #27343D;
+  --light: #F6F6F6;
+  --white: #FFFFFF;
+  --green: #69995d;
+  --red: #CC0100;
+  --orange-light: #FFF3E0;
+  --blue-light: #E3F2FD;
+  --green-light: #E8F5E9;
+  --red-light: #FFEBEE;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.12);
+  /* Type scale */
+  --text-caption: 11px;
+  --text-secondary: 12px;
+  --text-body: 14px;
+  --text-subhead: 16px;
+  --text-heading: 20px;
+}
+
+/* ========== PHONE FRAME ========== */
+.phone-frame {
+  width: 390px;
+  height: 844px;
+  background: var(--light);
+  border-radius: 44px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 0 0 4px #1a1a1a, 0 0 0 6px #333, var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========== STATUS BAR ========== */
+.status-bar {
+  height: 54px;
+  background: var(--dark);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 28px 8px;
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.status-bar .time { font-size: 15px; }
+.status-bar .icons { display: flex; gap: 6px; font-size: 12px; }
+
+/* ========== HEADER ========== */
+.app-header {
+  background: var(--dark);
+  color: var(--white);
+  padding: 0 20px 16px;
+  flex-shrink: 0;
+}
+.app-header .greeting { font-size: 22px; font-weight: 700; }
+.app-header .subtitle { font-size: 13px; opacity: 0.7; margin-top: 2px; }
+
+/* ========== SCREEN AREA ========== */
+.screen-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+.screen-area::-webkit-scrollbar { display: none; }
+
+.screen {
+  display: none;
+  padding: 16px;
+  padding-bottom: 24px;
+  min-height: 100%;
+}
+.screen.active { display: block; }
+
+/* ========== BOTTOM NAV ========== */
+.bottom-nav {
+  display: flex;
+  background: var(--white);
+  border-top: 1px solid #E0E0E0;
+  flex-shrink: 0;
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+}
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 4px 8px;
+  cursor: pointer;
+  transition: color 0.2s;
+  color: #999;
+  font-size: 10px;
+  font-weight: 500;
+  gap: 4px;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-item.active { color: var(--orange); }
+.nav-item svg { width: 22px; height: 22px; }
+.nav-item.active svg { fill: var(--orange); }
+
+/* ========== CARD ========== */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+}
+.card-header {
+  font-size: var(--text-secondary);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #999;
+  margin-bottom: 12px;
+}
+
+/* ========== STAT TILES ========== */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.stat-tile {
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 14px 8px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.stat-tile:active { transform: scale(0.96); }
+.stat-tile .value {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.stat-tile .label {
+  font-size: 11px;
+  color: #999;
+  margin-top: 4px;
+  font-weight: 500;
+}
+.stat-tile.green .value { color: var(--green); }
+.stat-tile.orange .value { color: var(--orange); }
+.stat-tile.red .value { color: var(--red); }
+.stat-tile.blue .value { color: var(--blue); }
+.stat-tile.neutral .value { color: var(--gray); }
+
+/* ========== BONUS CARD ========== */
+.bonus-card {
+  background: linear-gradient(135deg, #27343D 0%, #3a4f5c 100%);
+  border-radius: var(--radius);
+  padding: 18px;
+  color: var(--white);
+  margin-top: 12px;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.bonus-card:active { transform: scale(0.98); }
+.bonus-card .amount { font-size: 32px; font-weight: 700; }
+.bonus-card .trend { font-size: 13px; color: #8BC34A; margin-top: 2px; }
+.bonus-card .cta { font-size: 12px; color: var(--orange); margin-top: 8px; font-weight: 500; }
+
+/* ========== SCHEDULE CARD ========== */
+.schedule-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #F0F0F0;
+}
+.schedule-item:last-child { border-bottom: none; }
+.schedule-time {
+  font-size: var(--text-body);
+  font-weight: 700;
+  color: var(--blue);
+  width: 70px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.schedule-details .move-type { font-size: 14px; font-weight: 600; }
+.schedule-details .move-location { font-size: 12px; color: #999; margin-top: 2px; }
+
+/* ========== PERFORMANCE RINGS (Screen 2) ========== */
+.rings-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+.rings-svg { width: 200px; height: 200px; }
+.ring-legend {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+.ring-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.ring-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ========== DETAIL CARDS ========== */
+.detail-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+  border-left: 4px solid var(--green);
+}
+.detail-card.warn { border-left-color: var(--orange); }
+.detail-card.danger { border-left-color: var(--red); }
+.detail-card .dc-title {
+  font-size: var(--text-subhead);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.detail-card .dc-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--green);
+}
+.detail-card.warn .dc-value { color: var(--orange); }
+.detail-card.danger .dc-value { color: var(--red); }
+.detail-card .dc-sub {
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+}
+.sparkline {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 30px;
+  margin-top: 8px;
+}
+.sparkline .bar {
+  flex: 1;
+  background: var(--green);
+  border-radius: 2px;
+  min-height: 4px;
+  opacity: 0.7;
+}
+.coaching-tip {
+  background: var(--blue-light);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  font-size: var(--text-body);
+  color: var(--blue);
+  margin-top: 12px;
+  line-height: 1.5;
+}
+
+/* ========== THEME BANNER ========== */
+.theme-banner {
+  background: linear-gradient(135deg, #1a2a33 0%, #27343D 100%);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+.theme-banner::before {
+  content: '';
+  position: absolute;
+  top: -20px; right: -20px;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: rgba(239,139,34,0.1);
+}
+.theme-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: rgba(239,139,34,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.theme-info { flex: 1; }
+.theme-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.6;
+  margin-bottom: 2px;
+}
+.theme-name {
+  font-size: 14px;
+  font-weight: 700;
+}
+.theme-metrics {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+.theme-metric {
+  font-size: 12px;
+}
+.theme-metric .tm-value {
+  font-weight: 700;
+  font-size: 15px;
+}
+.theme-metric .tm-label {
+  opacity: 0.7;
+  font-size: 10px;
+}
+.theme-metric.good .tm-value { color: #8BC34A; }
+.theme-metric.warn .tm-value { color: var(--orange); }
+.theme-metric.bad .tm-value { color: #FF5252; }
+
+/* ========== TRAINING GUIDE (Level Up) ========== */
+.stage-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.stage-header {
+  background: var(--orange);
+  color: var(--white);
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+.stage-header .stage-progress {
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+.stage-header.completed { background: var(--green); }
+.stage-header.locked { background: #999; }
+.stage-body { padding: 12px 16px; }
+.skill-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #F0F0F0;
+  font-size: 13px;
+}
+.skill-item:last-child { border-bottom: none; }
+.skill-check {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 2px solid #E0E0E0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.skill-check.done {
+  background: var(--green);
+  border-color: var(--green);
+  color: var(--white);
+}
+.skill-check.half {
+  background: var(--orange-light);
+  border-color: var(--orange);
+  color: var(--orange);
+  font-size: 9px;
+}
+.skill-sigs {
+  font-size: 10px;
+  color: #999;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.gate-card {
+  background: #FFF8E1;
+  border: 2px solid var(--orange);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin: 8px 0;
+  text-align: center;
+}
+.gate-card .gate-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--orange);
+}
+.gate-card .gate-sub {
+  font-size: 11px;
+  color: #999;
+  margin-top: 4px;
+}
+.drive-hours-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+}
+.drive-hours-bar .dh-label { font-size: 13px; font-weight: 600; }
+.drive-hours-bar .dh-progress { flex: 1; }
+.drive-hours-bar .dh-count { font-size: 13px; font-weight: 700; color: var(--blue); }
+
+/* ========== SIMULATOR (Screen 3) ========== */
+.sim-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 16px;
+}
+.sim-tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  color: #999;
+  transition: all 0.2s;
+}
+.sim-tab.active {
+  color: var(--orange);
+  border-bottom-color: var(--orange);
+}
+.sim-big-number {
+  text-align: center;
+  font-size: 56px;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 10px 0;
+}
+.sim-trend {
+  text-align: center;
+  font-size: 14px;
+  color: var(--green);
+  margin-bottom: 20px;
+}
+.formula-bar {
+  display: flex;
+  height: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.formula-bar .seg {
+  transition: width 0.5s ease;
+}
+
+/* Slider */
+.sim-slider-group {
+  margin-bottom: 18px;
+}
+.sim-slider-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.sim-slider-label .impact {
+  color: var(--green);
+  font-weight: 600;
+}
+.sim-slider-label .impact.neg { color: var(--red); }
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #E0E0E0;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--orange);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+.preset-btns {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.preset-btn {
+  flex: 1;
+  padding: 10px 8px;
+  border: 2px solid #E0E0E0;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--white);
+  transition: all 0.2s;
+}
+.preset-btn.active {
+  border-color: var(--orange);
+  background: var(--orange-light);
+  color: var(--orange);
+}
+
+/* Speedometer gauge */
+.gauge-container {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0 0;
+}
+.gauge-svg { width: 240px; height: 140px; }
+.gauge-label {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.gauge-label.green { color: var(--green); }
+.gauge-label.orange { color: var(--orange); }
+.gauge-label.red { color: var(--red); }
+
+.sim-buttons {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+}
+.sim-action-btn {
+  flex: 1;
+  padding: 14px 8px;
+  border-radius: var(--radius-sm);
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s;
+  color: var(--white);
+}
+.sim-action-btn:active { transform: scale(0.96); }
+.sim-action-btn.late { background: var(--orange); }
+.sim-action-btn.callout { background: #E65100; }
+.sim-action-btn.noshow { background: var(--red); }
+
+.point-timeline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 0;
+  flex-wrap: wrap;
+}
+.point-dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.point-dot.expired { background: #CCC; }
+.point-dot.active { background: var(--orange); }
+.point-dot.expiring { background: var(--green); border: 2px solid var(--green); }
+
+.clean-projection {
+  background: var(--green-light);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  font-size: 13px;
+  color: var(--green);
+  text-align: center;
+  font-weight: 500;
+}
+
+/* ========== STAT TILE STATUS LABELS ========== */
+.stat-tile .status-tag {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+.stat-tile.green .status-tag { background: var(--green-light); color: var(--green); }
+.stat-tile.orange .status-tag { background: var(--orange-light); color: var(--orange); }
+.stat-tile.red .status-tag { background: var(--red-light); color: var(--red); }
+.stat-tile.blue .status-tag { background: var(--blue-light); color: var(--blue); }
+.stat-tile.neutral .status-tag { background: var(--light); color: var(--gray); }
+
+.stats-link {
+  display: block;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue);
+  margin-top: 4px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  padding: 6px;
+}
+.stats-link:active { opacity: 0.7; }
+
+/* ========== ONBOARDING ========== */
+.onboarding-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+}
+.onboarding-overlay.hidden { display: none; }
+
+.ob-screen {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+}
+.ob-screen.active { display: flex; }
+
+.ob-welcome {
+  flex: 1;
+  background: var(--dark);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 32px;
+  text-align: center;
+  color: var(--white);
+}
+.ob-mascot { font-size: 72px; margin-bottom: 16px; }
+.ob-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.ob-subtitle {
+  font-size: 15px;
+  opacity: 0.7;
+  margin-bottom: 32px;
+  line-height: 1.5;
+}
+.ob-field {
+  width: 100%;
+  margin-bottom: 16px;
+}
+.ob-field label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.5;
+  margin-bottom: 6px;
+  text-align: left;
+}
+.ob-select {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  border: 2px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.1);
+  color: var(--white);
+  font-size: 16px;
+  font-family: 'Roboto', sans-serif;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+.ob-select option { color: var(--dark); background: var(--white); }
+.ob-btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: var(--radius);
+  border: none;
+  background: var(--orange);
+  color: var(--white);
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: transform 0.15s;
+  font-family: 'Roboto', sans-serif;
+}
+.ob-btn:active { transform: scale(0.97); }
+.ob-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Tooltips */
+.ob-tooltip-layer {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: rgba(0,0,0,0.5);
+}
+.ob-tooltip-layer.active { display: block; }
+.ob-tooltip {
+  position: absolute;
+  background: var(--orange);
+  color: var(--white);
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  line-height: 1.4;
+  max-width: 260px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  z-index: 41;
+}
+.ob-tooltip::before {
+  content: '';
+  position: absolute;
+  width: 0; height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+}
+.ob-tooltip.arrow-up::before {
+  top: -8px;
+  left: 24px;
+  border-bottom: 8px solid var(--orange);
+}
+.ob-tooltip.arrow-down::before {
+  bottom: -8px;
+  left: 24px;
+  border-top: 8px solid var(--orange);
+}
+.ob-tooltip .ob-dismiss {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.8;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: var(--white);
+  padding: 0;
+}
+
+/* ========== PROPS BUTTON ========== */
+.props-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  background: rgba(239,139,34,0.1);
+  border: 1px solid rgba(239,139,34,0.3);
+  color: var(--orange);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.props-btn:active {
+  transform: scale(0.95);
+  background: rgba(239,139,34,0.25);
+}
+.props-btn.given {
+  background: var(--orange);
+  color: var(--white);
+  border-color: var(--orange);
+}
+
+/* ========== ESCALATING FLAME ========== */
+.streak-flame.level-1 { animation: flicker 1.5s ease-in-out infinite; }
+.streak-flame.level-2 { animation: flicker 1.2s ease-in-out infinite; font-size: 40px; }
+.streak-flame.level-3 { animation: flickerIntense 1s ease-in-out infinite; font-size: 42px; filter: drop-shadow(0 0 6px rgba(255,160,0,0.4)); }
+.streak-flame.level-4 { animation: flickerIntense 0.8s ease-in-out infinite; font-size: 44px; filter: drop-shadow(0 0 10px rgba(255,200,0,0.5)); }
+.streak-flame.level-5 { animation: flickerIntense 0.7s ease-in-out infinite; font-size: 46px; filter: drop-shadow(0 0 14px rgba(0,150,255,0.5)); }
+@keyframes flickerIntense {
+  0%, 100% { transform: scale(1) rotate(-3deg); }
+  25% { transform: scale(1.1) rotate(2deg); }
+  50% { transform: scale(1.05) rotate(-2deg); }
+  75% { transform: scale(1.12) rotate(3deg); }
+}
+
+/* ========== SKILL DETAIL MODAL ========== */
+.skill-detail-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 20;
+}
+.skill-detail-overlay.open { display: block; }
+.skill-detail-sheet {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  background: var(--white);
+  border-radius: var(--radius) var(--radius) 0 0;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.2);
+  padding: 20px;
+  z-index: 21;
+  max-height: 85%;
+  overflow-y: auto;
+}
+.skill-detail-sheet.open { display: block; }
+.skill-detail-sheet::-webkit-scrollbar { display: none; }
+.sd-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--light);
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+}
+.sd-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  padding-right: 36px;
+}
+.sd-status {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.sd-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #999;
+  margin: 16px 0 8px;
+}
+.sd-video-placeholder {
+  background: var(--dark);
+  border-radius: var(--radius-sm);
+  height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  gap: 8px;
+  cursor: pointer;
+}
+.sd-video-placeholder .play-btn {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+.sd-instructions {
+  background: var(--light);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.sd-instructions li {
+  margin-bottom: 6px;
+}
+.sd-photo-area {
+  border: 2px dashed #E0E0E0;
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+.sd-photo-area .photo-icon { font-size: 28px; margin-bottom: 4px; }
+.sd-photo-area .photo-text { font-size: 12px; color: #999; }
+.sd-signoff {
+  background: var(--orange-light);
+  border-radius: var(--radius);
+  padding: 16px;
+  text-align: center;
+}
+.sd-signoff-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 8px;
+}
+.sd-signoff-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sd-signoff-btn {
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--orange);
+  background: var(--white);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--dark);
+  transition: all 0.2s;
+}
+.sd-signoff-btn:active {
+  background: var(--orange);
+  color: var(--white);
+}
+.sd-signoff-btn .btn-desc {
+  font-size: 11px;
+  font-weight: 400;
+  color: #999;
+  margin-top: 2px;
+}
+.sd-history {
+  font-size: 12px;
+  color: #999;
+}
+.sd-history-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+.sd-history-check {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--green);
+  color: var(--white);
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========== LEADERBOARD (Screen 4) ========== */
+.your-rank {
+  text-align: center;
+  padding: 16px;
+}
+.your-rank .rank-num { font-size: 42px; font-weight: 700; color: var(--orange); }
+.your-rank .rank-of { font-size: 14px; color: #999; }
+
+.cat-tabs {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  margin-bottom: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+.cat-tabs::-webkit-scrollbar { display: none; }
+.cat-tab {
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  color: #999;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.cat-tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+.lb-row {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 6px;
+  background: var(--white);
+  transition: all 0.2s;
+}
+.lb-row.you {
+  border: 2px solid var(--orange);
+  background: var(--orange-light);
+}
+.lb-row.top3 { background: #FFFDE7; }
+.lb-rank {
+  width: 30px;
+  font-size: 16px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.lb-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--blue-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--blue);
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+.lb-name { flex: 1; font-size: 14px; font-weight: 500; }
+.lb-score { font-size: 16px; font-weight: 700; color: var(--gray); }
+.lb-medal { font-size: 18px; margin-right: 4px; }
+
+.branch-rank {
+  text-align: center;
+  padding: 14px;
+  background: var(--blue-light);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  color: var(--blue);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.streak-banner {
+  background: linear-gradient(135deg, var(--green) 0%, #4CAF50 100%);
+  border-radius: var(--radius);
+  padding: 16px;
+  color: var(--white);
+  text-align: center;
+  margin-bottom: 12px;
+}
+.streak-banner .streak-num { font-size: 36px; font-weight: 700; }
+.streak-banner .streak-label { font-size: 13px; opacity: 0.9; }
+
+/* ========== SCHEDULE (Screen 5) ========== */
+.schedule-toggle {
+  display: flex;
+  background: #E0E0E0;
+  border-radius: 20px;
+  padding: 3px;
+  margin-bottom: 16px;
+}
+.schedule-toggle-btn {
+  flex: 1;
+  text-align: center;
+  padding: 8px;
+  border-radius: 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #999;
+}
+.schedule-toggle-btn.active {
+  background: var(--white);
+  color: var(--dark);
+  box-shadow: var(--shadow);
+}
+.move-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+  border-left: 4px solid var(--blue);
+}
+.move-card .mc-time { font-size: 13px; font-weight: 700; color: var(--blue); }
+.move-card .mc-type { font-size: var(--text-subhead); font-weight: 700; margin: 4px 0; }
+.move-card .mc-detail { font-size: var(--text-secondary); color: #999; margin: 2px 0; }
+.move-card .crew-avatars {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.crew-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--orange-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--orange);
+}
+.hours-bar {
+  background: var(--dark);
+  border-radius: var(--radius);
+  padding: 16px;
+  color: var(--white);
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+}
+.hours-bar .hb-num { font-size: 22px; font-weight: 700; }
+.hours-bar .hb-label { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+
+/* ========== LEVEL UP (Screen 6) ========== */
+.career-trail {
+  position: relative;
+  padding-left: 24px;
+  margin-bottom: 16px;
+}
+.career-trail::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #E0E0E0;
+}
+.career-node {
+  position: relative;
+  padding: 12px 0 12px 20px;
+}
+.career-node::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 18px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #E0E0E0;
+  border: 3px solid var(--white);
+  z-index: 1;
+}
+.career-node.completed::before { background: var(--green); }
+.career-node.current::before {
+  background: var(--orange);
+  box-shadow: 0 0 0 4px rgba(239,139,34,0.25);
+}
+.career-node.locked::before { background: #CCC; }
+.career-node .cn-title { font-size: 14px; font-weight: 700; }
+.career-node .cn-pay { font-size: 12px; color: var(--green); font-weight: 500; }
+.career-node .cn-status { font-size: 11px; color: #999; }
+
+.progress-bar {
+  height: 8px;
+  background: #E0E0E0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 6px 0;
+}
+.progress-bar .fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+.progress-bar .fill.green { background: var(--green); }
+.progress-bar .fill.orange { background: var(--orange); }
+.progress-bar .fill.blue { background: var(--blue); }
+
+.req-list { list-style: none; padding: 0; }
+.req-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 13px;
+}
+.req-check {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 11px;
+}
+.req-check.done { background: var(--green); color: var(--white); }
+.req-check.pending { background: #E0E0E0; color: #999; }
+
+.training-tabs {
+  display: flex;
+  gap: 0;
+  margin: 12px 0;
+}
+.training-tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  color: #999;
+}
+.training-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+.module-card {
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-bottom: 8px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.module-num {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: var(--blue-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--blue);
+  flex-shrink: 0;
+}
+.module-num.done { background: var(--green); color: var(--white); }
+.module-info { flex: 1; }
+.module-info .mi-title { font-size: 13px; font-weight: 600; }
+.module-info .mi-sub { font-size: 11px; color: #999; margin-top: 2px; }
+
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+.badge-item {
+  text-align: center;
+  padding: 14px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  box-shadow: var(--shadow);
+}
+.badge-item.earned { border: 2px solid var(--orange); }
+.badge-item.locked { opacity: 0.4; }
+.badge-icon { font-size: 28px; }
+.badge-name { font-size: 10px; font-weight: 600; margin-top: 4px; }
+
+/* ========== DAILY QUIZ ========== */
+.quiz-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 0;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.quiz-header {
+  background: linear-gradient(135deg, var(--blue) 0%, #0868a8 100%);
+  padding: 12px 16px;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.quiz-header .qh-icon { font-size: 20px; }
+.quiz-header .qh-title { font-size: 13px; font-weight: 700; flex: 1; }
+.quiz-header .qh-streak {
+  background: rgba(255,255,255,0.2);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.quiz-body { padding: 16px; }
+.quiz-question {
+  font-size: var(--text-subhead);
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 14px;
+  color: var(--dark);
+}
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-option {
+  padding: 12px 14px;
+  border: 2px solid #E0E0E0;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-body);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  -webkit-tap-highlight-color: transparent;
+}
+.quiz-option:active { transform: scale(0.98); }
+.quiz-option .opt-letter {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--gray);
+  flex-shrink: 0;
+}
+.quiz-option.correct {
+  border-color: var(--green);
+  background: var(--green-light);
+}
+.quiz-option.correct .opt-letter {
+  background: var(--green);
+  color: var(--white);
+}
+.quiz-option.wrong {
+  border-color: var(--red);
+  background: var(--red-light);
+}
+.quiz-option.wrong .opt-letter {
+  background: var(--red);
+  color: var(--white);
+}
+.quiz-option.dimmed {
+  opacity: 0.4;
+  pointer-events: none;
+}
+.quiz-result {
+  display: none;
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.quiz-result.show { display: block; }
+.quiz-result.correct-result {
+  background: var(--green-light);
+  color: var(--green);
+}
+.quiz-result.wrong-result {
+  background: var(--red-light);
+  color: var(--red);
+}
+.quiz-result .qr-source {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-top: 6px;
+}
+.quiz-done {
+  display: none;
+  text-align: center;
+  padding: 20px 16px;
+}
+.quiz-done.show { display: block; }
+.quiz-done .qd-icon { font-size: 36px; margin-bottom: 8px; }
+.quiz-done .qd-text { font-size: 14px; font-weight: 600; color: var(--dark); }
+.quiz-done .qd-sub { font-size: 12px; color: #999; margin-top: 4px; }
+
+/* ========== ASK EINSTEIN ========== */
+.ask-fab {
+  position: absolute;
+  bottom: 90px;
+  right: 16px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: var(--white);
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(239,139,34,0.4);
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+.ask-fab:active { transform: scale(0.9); }
+
+.ask-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 22;
+}
+.ask-overlay.open { display: block; }
+
+.ask-sheet {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  height: 75%;
+  background: var(--white);
+  border-radius: var(--radius) var(--radius) 0 0;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.2);
+  z-index: 23;
+  display: none;
+  flex-direction: column;
+}
+.ask-sheet.open {
+  display: flex;
+}
+.ask-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  border-bottom: 1px solid #F0F0F0;
+  flex-shrink: 0;
+}
+.ask-header .ask-mascot { font-size: 28px; }
+.ask-header .ask-title { font-size: 16px; font-weight: 700; flex: 1; }
+.ask-header .ask-close-btn {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--light);
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #999;
+}
+.ask-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ask-messages::-webkit-scrollbar { display: none; }
+.ask-msg {
+  max-width: 85%;
+  padding: 12px 14px;
+  border-radius: 16px;
+  font-size: var(--text-body);
+  line-height: 1.5;
+}
+.ask-msg.bot {
+  background: var(--light);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+.ask-msg.user {
+  background: var(--blue);
+  color: var(--white);
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+.ask-msg .source-tag {
+  display: inline-block;
+  background: rgba(0,0,0,0.06);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 10px;
+  color: #999;
+  margin-top: 6px;
+}
+.ask-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.ask-suggestion {
+  padding: 6px 12px;
+  border-radius: 16px;
+  border: 1.5px solid #E0E0E0;
+  background: var(--white);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--gray);
+}
+.ask-suggestion:active {
+  border-color: var(--orange);
+  background: var(--orange-light);
+}
+.ask-input-bar {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid #F0F0F0;
+  flex-shrink: 0;
+  background: var(--white);
+}
+.ask-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1.5px solid #E0E0E0;
+  border-radius: 20px;
+  font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.ask-input:focus { border-color: var(--orange); }
+.ask-send {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--orange);
+  border: none;
+  color: var(--white);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.ask-typing {
+  display: flex;
+  gap: 4px;
+  padding: 12px 14px;
+  align-self: flex-start;
+}
+.ask-typing .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #CCC;
+  animation: typingBounce 1.2s ease-in-out infinite;
+}
+.ask-typing .dot:nth-child(2) { animation-delay: 0.2s; }
+.ask-typing .dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-6px); }
+}
+
+/* ========== STREAK SYSTEM ========== */
+.streak-card-primary {
+  background: linear-gradient(135deg, #27343D 0%, #1a2a33 100%);
+  border-radius: var(--radius);
+  padding: 16px;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.streak-flame {
+  font-size: 38px;
+  animation: flicker 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes flicker {
+  0%, 100% { transform: scale(1) rotate(-2deg); }
+  50% { transform: scale(1.08) rotate(2deg); }
+}
+.streak-number {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+}
+.streak-label {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+.streak-best {
+  font-size: 11px;
+  color: var(--orange);
+  margin-top: 4px;
+}
+.streak-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-top: 10px;
+}
+.streak-cal-header {
+  text-align: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.4);
+  padding: 2px;
+}
+.streak-day {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 600;
+}
+.streak-day.active {
+  background: var(--orange);
+  color: var(--white);
+}
+.streak-day.today {
+  background: var(--blue);
+  color: var(--white);
+  box-shadow: 0 0 0 2px rgba(9,121,195,0.3);
+}
+.streak-day.inactive {
+  color: rgba(255,255,255,0.25);
+}
+.streak-day.future {
+  color: rgba(255,255,255,0.1);
+}
+
+.active-streaks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.mini-streak {
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mini-streak-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.mini-streak-num {
+  font-size: 18px;
+  font-weight: 700;
+}
+.mini-streak-label {
+  font-size: 10px;
+  color: #999;
+}
+
+/* ========== BADGE SHOWCASE ========== */
+.badge-showcase {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.badge-card {
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 12px 8px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s;
+}
+.badge-card:active { transform: scale(0.96); }
+.badge-card.earned {
+  border: 2px solid var(--orange);
+}
+.badge-card.locked {
+  filter: grayscale(1) opacity(0.35);
+}
+.badge-card .bc-icon {
+  font-size: 32px;
+  margin-bottom: 4px;
+}
+.badge-card .bc-name {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--dark);
+  line-height: 1.2;
+}
+.badge-card .bc-desc {
+  font-size: 9px;
+  color: #999;
+  margin-top: 2px;
+  line-height: 1.2;
+}
+.badge-card .bc-progress {
+  font-size: 9px;
+  color: var(--orange);
+  font-weight: 600;
+  margin-top: 4px;
+}
+.badge-card.earned .bc-progress { color: var(--green); }
+
+/* Celebration / Milestone Modal */
+.milestone-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 30;
+  justify-content: center;
+  align-items: center;
+}
+.milestone-overlay.open {
+  display: flex;
+}
+.milestone-card {
+  background: var(--white);
+  border-radius: 24px;
+  width: 300px;
+  padding: 32px 24px;
+  text-align: center;
+  animation: celebrationPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+@keyframes celebrationPop {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.milestone-mascot {
+  font-size: 64px;
+  margin-bottom: 8px;
+  animation: mascotEntrance 0.5s ease-out 0.25s both;
+}
+@keyframes mascotEntrance {
+  0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+  60% { transform: scale(1.1) rotate(3deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.milestone-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 4px;
+  animation: textSlideUp 0.4s ease-out 0.4s both;
+}
+.milestone-sub {
+  font-size: 14px;
+  color: #999;
+  line-height: 1.4;
+  margin-bottom: 20px;
+  animation: textSlideUp 0.4s ease-out 0.5s both;
+}
+@keyframes textSlideUp {
+  0% { transform: translateY(12px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+.milestone-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: var(--orange);
+  color: var(--white);
+  font-size: 16px;
+  animation: textSlideUp 0.4s ease-out 0.6s both;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.milestone-btn:active { transform: scale(0.97); }
+.milestone-streak-num {
+  font-size: 72px;
+  font-weight: 700;
+  color: var(--orange);
+  line-height: 1;
+  animation: numCountUp 0.6s ease-out 0.35s both;
+  font-variant-numeric: tabular-nums;
+}
+@keyframes numCountUp {
+  0% { transform: scale(0.5); opacity: 0; }
+  70% { transform: scale(1.08); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.milestone-glow {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(239,139,34,0.15) 0%, transparent 70%);
+  animation: glowPulse 2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes glowPulse {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
+  50% { transform: translateX(-50%) scale(1.2); opacity: 1; }
+}
+/* Confetti */
+.confetti-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 31;
+  overflow: hidden;
+}
+.confetti-piece {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  top: 40%;
+  left: 50%;
+  animation: confettiFall 1.2s ease-out forwards;
+  opacity: 0;
+}
+@keyframes confettiFall {
+  0% { transform: translate(0, 0) rotate(0deg) scale(0); opacity: 1; }
+  20% { opacity: 1; transform: translate(var(--dx), var(--dy-up)) rotate(180deg) scale(1); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy-down)) rotate(720deg) scale(0.5); }
+}
+
+/* Quiz completion delight */
+.quiz-done.show {
+  display: block;
+  animation: textSlideUp 0.3s ease-out;
+}
+.quiz-done .qd-icon {
+  font-size: 42px;
+  margin-bottom: 8px;
+  animation: mascotEntrance 0.4s ease-out 0.1s both;
+}
+.quiz-result.show {
+  display: block;
+  animation: resultReveal 0.3s ease-out;
+}
+@keyframes resultReveal {
+  0% { transform: translateY(8px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+/* Correct answer option pulse */
+.quiz-option.correct {
+  animation: correctPulse 0.4s ease-out;
+}
+@keyframes correctPulse {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+/* Stat tile entrance on screen load */
+.screen.active .stat-tile {
+  animation: tileEntrance 0.3s ease-out both;
+}
+.screen.active .stat-tile:nth-child(1) { animation-delay: 0.05s; }
+.screen.active .stat-tile:nth-child(2) { animation-delay: 0.08s; }
+.screen.active .stat-tile:nth-child(3) { animation-delay: 0.11s; }
+.screen.active .stat-tile:nth-child(4) { animation-delay: 0.14s; }
+.screen.active .stat-tile:nth-child(5) { animation-delay: 0.17s; }
+.screen.active .stat-tile:nth-child(6) { animation-delay: 0.20s; }
+@keyframes tileEntrance {
+  0% { transform: translateY(8px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Performance rings animate on My Stats load */
+.screen.active .rings-svg circle:not([stroke="#E0E0E0"]) {
+  animation: ringDraw 1s ease-out 0.3s both;
+}
+@keyframes ringDraw {
+  0% { stroke-dashoffset: 565; }
+}
+
+/* ========== FEED (Screen 7) ========== */
+.feed-stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px;
+  background: var(--blue-light);
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+}
+.feed-stat { text-align: center; }
+.feed-stat .fs-num { font-size: 20px; font-weight: 700; color: var(--blue); }
+.feed-stat .fs-label { font-size: 10px; color: #999; }
+
+.feed-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+}
+.feed-filter {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--white);
+  border: 1.5px solid #E0E0E0;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.feed-filter.active {
+  background: var(--orange);
+  color: var(--white);
+  border-color: var(--orange);
+}
+
+.feed-item {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+}
+.feed-item .fi-type {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+.feed-item .fi-type.review { color: var(--blue); }
+.feed-item .fi-type.praise { color: var(--orange); }
+.feed-item .fi-type.milestone { color: var(--green); }
+.feed-item .fi-content { font-size: var(--text-body); line-height: 1.5; }
+.feed-item .fi-meta { font-size: var(--text-caption); color: #999; margin-top: 6px; }
+.stars { color: #FFC107; letter-spacing: 2px; }
+
+/* ========== BRANCH HOME (Screen 8) ========== */
+.announcement-card {
+  background: linear-gradient(135deg, var(--orange) 0%, #F5A623 100%);
+  border-radius: var(--radius);
+  padding: 18px;
+  color: var(--white);
+  margin-bottom: 12px;
+}
+.announcement-card .ac-title { font-size: 16px; font-weight: 700; }
+.announcement-card .ac-body { font-size: 13px; margin-top: 6px; opacity: 0.9; line-height: 1.4; }
+
+.events-list {
+  list-style: none;
+  padding: 0;
+}
+.event-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #F0F0F0;
+  font-size: 13px;
+}
+.event-date {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--orange-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.event-date .ed-month { font-size: 9px; font-weight: 700; color: var(--orange); text-transform: uppercase; }
+.event-date .ed-day { font-size: 16px; font-weight: 700; color: var(--dark); }
+
+.safety-gauge-mini {
+  text-align: center;
+  padding: 16px;
+}
+.safety-gauge-mini .sgm-num { font-size: 36px; font-weight: 700; }
+.safety-gauge-mini .sgm-label { font-size: 12px; color: #999; }
+
+/* ========== MISC ========== */
+.section-title {
+  font-size: var(--text-subhead);
+  font-weight: 700;
+  margin: 16px 0 10px;
+  color: var(--dark);
+}
+.divider {
+  height: 1px;
+  background: #E0E0E0;
+  margin: 12px 0;
+}
+.more-nav-sheet {
+  display: none;
+  position: absolute;
+  bottom: 70px;
+  left: 0; right: 0;
+  background: var(--white);
+  border-radius: var(--radius) var(--radius) 0 0;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+  padding: 20px;
+  z-index: 10;
+}
+.more-nav-sheet.open { display: block; }
+.more-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid #F0F0F0;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+}
+.more-item:last-child { border-bottom: none; }
+.more-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 9;
+}
+.overlay.open { display: block; }
+
+/* Week view */
+.week-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #F0F0F0;
+}
+.week-day {
+  width: 40px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dark);
+  flex-shrink: 0;
+}
+.week-info {
+  flex: 1;
+  font-size: 13px;
+}
+.week-info.off { color: #CCC; font-style: italic; }
+.week-hrs {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue);
+}
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <!-- ==================== ONBOARDING ==================== -->
+  <div class="onboarding-overlay" id="onboardingOverlay">
+    <!-- Screen 1: Welcome + Identity -->
+    <div class="ob-screen active" id="ob-welcome">
+      <div class="ob-welcome">
+        <div class="ob-mascot">&#129504;</div>
+        <div class="ob-title">Welcome to Einstein</div>
+        <div class="ob-subtitle">Your performance, schedule, training, and career — all in one place.</div>
+
+        <div class="ob-field">
+          <label>Your Branch</label>
+          <select class="ob-select" id="obBranch" onchange="checkObReady()">
+            <option value="">Select your branch...</option>
+            <option value="sa">South Austin</option>
+            <option value="na">North Austin</option>
+            <option value="le">Leander</option>
+            <option value="san">San Antonio</option>
+            <option value="hou">Houston</option>
+            <option value="dal">Dallas</option>
+            <option value="fw">Fort Worth</option>
+            <option value="gar">Garland</option>
+            <option value="mck">McKinney</option>
+            <option value="tam">Tampa</option>
+          </select>
+        </div>
+
+        <div class="ob-field">
+          <label>Your Name</label>
+          <select class="ob-select" id="obName" onchange="checkObReady()">
+            <option value="">Find your name...</option>
+            <option value="marcus">Marcus Johnson</option>
+            <option value="diego">Diego Rodriguez</option>
+            <option value="andre">Andre Thompson</option>
+            <option value="kevin">Kevin Park</option>
+            <option value="tony">Tony Martinez</option>
+            <option value="james">James Lee</option>
+          </select>
+        </div>
+
+        <button class="ob-btn" id="obGoBtn" disabled onclick="completeOnboarding()">Let's Go</button>
+        <div style="margin-top:16px;font-size:12px;opacity:0.4;cursor:pointer" onclick="skipOnboarding()">Skip (demo mode)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tooltip Layer (shows after onboarding, over main app) -->
+  <div class="ob-tooltip-layer" id="tooltipLayer">
+    <div class="ob-tooltip" id="activeTooltip" style="display:none"></div>
+  </div>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <span class="icons">LTE &nbsp; 100%</span>
+  </div>
+
+  <!-- App Header -->
+  <div class="app-header" id="appHeader">
+    <div class="greeting" id="headerTitle">Hey Marcus</div>
+    <div class="subtitle" id="headerSub">Lead Mover &bull; South Austin &bull; 1 yr 4 mo</div>
+  </div>
+
+  <!-- Screen Area -->
+  <div class="screen-area" id="screenArea">
+
+    <!-- ==================== SCREEN 1: THE PULSE ==================== -->
+    <div class="screen active" id="screen-pulse">
+      <!-- Quarterly Theme Banner -->
+      <div class="theme-banner">
+        <div class="theme-icon">&#128661;</div>
+        <div class="theme-info">
+          <div class="theme-label">Q1 Theme &bull; Driver's Ed</div>
+          <div class="theme-name">Big Bubble Energy</div>
+          <div class="theme-metrics">
+            <div class="theme-metric good">
+              <div class="tm-value">87</div>
+              <div class="tm-label">Your Safety</div>
+            </div>
+            <div class="theme-metric good">
+              <div class="tm-value">Not At Risk</div>
+              <div class="tm-label">Status</div>
+            </div>
+            <div class="theme-metric good">
+              <div class="tm-value">0</div>
+              <div class="tm-label">Claims</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-tile neutral" onclick="navigateTo('stats')">
+          <div class="value">#4</div>
+          <div class="label">Branch Rank</div>
+          <div class="status-tag">of 23</div>
+        </div>
+        <div class="stat-tile green" onclick="navigateTo('stats')">
+          <div class="value">87</div>
+          <div class="label">Safety Score</div>
+          <div class="status-tag">&#9650; 3</div>
+        </div>
+        <div class="stat-tile green" onclick="navigateTo('stats')">
+          <div class="value">$0.45</div>
+          <div class="label">Damages</div>
+          <div class="status-tag">&lt; $1.23</div>
+        </div>
+        <div class="stat-tile blue" onclick="navigateTo('stats')">
+          <div class="value">4.8<span style="font-size:14px">&#9733;</span></div>
+          <div class="label">Reviews</div>
+          <div class="status-tag">22 this qtr</div>
+        </div>
+        <div class="stat-tile green" onclick="navigateTo('stats')">
+          <div class="value">1.5</div>
+          <div class="label">Call-in Pts</div>
+          <div class="status-tag">&#9660; 0.5 in 12d</div>
+        </div>
+        <div class="stat-tile green" onclick="navigateTo('stats')">
+          <div class="value">85%</div>
+          <div class="label">Estimates</div>
+          <div class="status-tag">tgt 90%</div>
+        </div>
+      </div>
+
+      <div class="stats-link" onclick="navigateTo('stats')">View all stats &amp; details &#8594;</div>
+
+      <!-- Primary Streak (compact) -->
+      <div class="streak-card-primary" onclick="showMilestone()" style="padding:12px 16px">
+        <div class="streak-flame level-3" style="font-size:28px">&#128293;</div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:baseline;gap:8px">
+            <div class="streak-number" style="font-size:28px">23</div>
+            <div class="streak-label" style="font-size:13px;opacity:0.8">day shift streak</div>
+          </div>
+          <div class="streak-best" style="font-size:11px">Best: 41 &bull; 7 away from new record</div>
+        </div>
+        <div style="font-size:12px;opacity:0.5">&#8250;</div>
+      </div>
+
+      <!-- Daily Quiz -->
+      <div class="quiz-card" id="quizCard">
+        <div class="quiz-header">
+          <div class="qh-icon">&#129504;</div>
+          <div class="qh-title">Daily Quiz</div>
+          <div class="qh-streak">&#128293; 7 day streak</div>
+        </div>
+        <div class="quiz-body" id="quizBody">
+          <div class="quiz-question" id="quizQuestion">Which side of the moving pad should face the furniture — the light side or the dark side?</div>
+          <div class="quiz-options" id="quizOptions">
+            <div class="quiz-option" onclick="answerQuiz(0, this)">
+              <div class="opt-letter">A</div>
+              <div>Light side (it's cleaner)</div>
+            </div>
+            <div class="quiz-option" onclick="answerQuiz(1, this)">
+              <div class="opt-letter">B</div>
+              <div>Dark side faces the furniture</div>
+            </div>
+            <div class="quiz-option" onclick="answerQuiz(2, this)">
+              <div class="opt-letter">C</div>
+              <div>Doesn't matter — either side works</div>
+            </div>
+            <div class="quiz-option" onclick="answerQuiz(3, this)">
+              <div class="opt-letter">D</div>
+              <div>Light side, except for glass items</div>
+            </div>
+          </div>
+          <div class="quiz-result" id="quizResult"></div>
+        </div>
+        <div class="quiz-done" id="quizDone">
+          <div class="qd-icon">&#10003;</div>
+          <div class="qd-text">Quiz complete! Streak: 8 days</div>
+          <div class="qd-sub">Next quiz tomorrow at 6:30 AM</div>
+        </div>
+      </div>
+
+      <div class="bonus-card" onclick="navigateTo('simulate')">
+        <div style="font-size:12px;opacity:0.7;margin-bottom:4px;">PROJECTED QUARTERLY BONUS</div>
+        <div class="amount">$384</div>
+        <div class="trend">&#9650; +$22 from last week</div>
+        <div class="cta">Tap to simulate &#8594;</div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <div class="card-header">Today's Moves</div>
+        <div class="schedule-item">
+          <div class="schedule-time">8:00 AM</div>
+          <div class="schedule-details">
+            <div class="move-type">3BR House</div>
+            <div class="move-location">Leander &bull; ~6 hrs &bull; Truck 24</div>
+          </div>
+        </div>
+        <div class="schedule-item">
+          <div class="schedule-time">2:00 PM</div>
+          <div class="schedule-details">
+            <div class="move-type">1BR Apartment</div>
+            <div class="move-location">N. Austin &bull; ~3 hrs &bull; Truck 24</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 2: MY STATS ==================== -->
+    <div class="screen" id="screen-stats">
+      <!-- Performance Rings -->
+      <div class="card">
+        <div class="card-header">Your Overview</div>
+        <div class="rings-container">
+          <svg class="rings-svg" viewBox="0 0 200 200">
+            <!-- Safety (outer) -->
+            <circle cx="100" cy="100" r="90" fill="none" stroke="#E0E0E0" stroke-width="14"/>
+            <circle cx="100" cy="100" r="90" fill="none" stroke="#4CAF50" stroke-width="14"
+              stroke-dasharray="565" stroke-dashoffset="74" stroke-linecap="round"
+              transform="rotate(-90 100 100)" style="transition: stroke-dashoffset 1s ease"/>
+            <!-- Quality (2nd) -->
+            <circle cx="100" cy="100" r="72" fill="none" stroke="#E0E0E0" stroke-width="14"/>
+            <circle cx="100" cy="100" r="72" fill="none" stroke="#69995d" stroke-width="14"
+              stroke-dasharray="452" stroke-dashoffset="36" stroke-linecap="round"
+              transform="rotate(-90 100 100)"/>
+            <!-- Service (3rd) -->
+            <circle cx="100" cy="100" r="54" fill="none" stroke="#E0E0E0" stroke-width="14"/>
+            <circle cx="100" cy="100" r="54" fill="none" stroke="#0979C3" stroke-width="14"
+              stroke-dasharray="339" stroke-dashoffset="34" stroke-linecap="round"
+              transform="rotate(-90 100 100)"/>
+            <!-- Reliability (inner) -->
+            <circle cx="100" cy="100" r="36" fill="none" stroke="#E0E0E0" stroke-width="14"/>
+            <circle cx="100" cy="100" r="36" fill="none" stroke="#EF8B22" stroke-width="14"
+              stroke-dasharray="226" stroke-dashoffset="34" stroke-linecap="round"
+              transform="rotate(-90 100 100)"/>
+          </svg>
+        </div>
+        <div class="ring-legend">
+          <div class="ring-legend-item"><div class="ring-dot" style="background:#4CAF50"></div>Safety (87%)</div>
+          <div class="ring-legend-item"><div class="ring-dot" style="background:#69995d"></div>Quality (92%)</div>
+          <div class="ring-legend-item"><div class="ring-dot" style="background:#0979C3"></div>Service (90%)</div>
+          <div class="ring-legend-item"><div class="ring-dot" style="background:#EF8B22"></div>Reliability (85%)</div>
+        </div>
+      </div>
+
+      <!-- Detail Cards -->
+      <div class="detail-card">
+        <div class="dc-title">Safety Score</div>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <div class="dc-value">87</div>
+          <div class="dc-sub">#3 in branch &bull; &#9650; from last week</div>
+        </div>
+        <div class="sparkline">
+          <div class="bar" style="height:60%"></div>
+          <div class="bar" style="height:70%"></div>
+          <div class="bar" style="height:65%"></div>
+          <div class="bar" style="height:80%"></div>
+          <div class="bar" style="height:75%"></div>
+          <div class="bar" style="height:82%"></div>
+          <div class="bar" style="height:87%;background:var(--orange)"></div>
+        </div>
+        <div class="dc-sub">Following distance improved. Mobile usage is next.</div>
+      </div>
+
+      <div class="detail-card">
+        <div class="dc-title">Damage Rate</div>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <div class="dc-value">$0.45</div>
+          <div class="dc-sub">12-day damage-free streak</div>
+        </div>
+        <div class="progress-bar"><div class="fill green" style="width:82%"></div></div>
+        <div class="dc-sub">Under $1.23 = green zone. You're crushing it.</div>
+      </div>
+
+      <div class="detail-card">
+        <div class="dc-title">Customer Reviews</div>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <div class="dc-value" style="display:flex;align-items:center;gap:4px">4.8 <span class="stars" style="font-size:16px">&#9733;&#9733;&#9733;&#9733;&#9733;</span></div>
+          <div class="dc-sub">22 reviews this quarter</div>
+        </div>
+        <div class="dc-sub" style="margin-top:8px;font-style:italic;">"Marcus and team were incredible! Careful with everything." — Sarah M.</div>
+      </div>
+
+      <div class="detail-card">
+        <div class="dc-title">Estimate Accuracy</div>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <div class="dc-value">85%</div>
+          <div class="dc-sub">7 jobs came in over estimate this quarter</div>
+        </div>
+        <div class="progress-bar"><div class="fill blue" style="width:85%"></div></div>
+      </div>
+
+      <div class="detail-card warn">
+        <div class="dc-title">Attendance</div>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <div class="dc-value" style="color:var(--orange)">1.5</div>
+          <div class="dc-sub">0.5 pts drop off in 12 days</div>
+        </div>
+        <div class="progress-bar"><div class="fill orange" style="width:27%"></div></div>
+      </div>
+
+      <div class="detail-card">
+        <div class="dc-title">Eval Score</div>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <div class="dc-value">91%</div>
+          <div class="dc-sub">Last 90 days &bull; Last eval: 3/18</div>
+        </div>
+      </div>
+
+      <div class="coaching-tip">
+        Your DPH has been under $0.50 for 6 straight weeks. If your driver score gets above 90, you'll be top 3 in the branch.
+      </div>
+
+      <!-- Theme Section -->
+      <div class="section-title">Q1 Theme: Driver's Ed</div>
+      <div class="theme-banner" style="margin-bottom:0">
+        <div class="theme-icon">&#128661;</div>
+        <div class="theme-info">
+          <div class="theme-name">Big Bubble Energy</div>
+          <div style="font-size:12px;opacity:0.8;margin-top:4px;line-height:1.4">Zero claims in 6 weeks branch-wide. You're contributing — 87 safety score, 0 at-fault incidents this quarter.</div>
+          <div class="theme-metrics" style="margin-top:8px">
+            <div class="theme-metric good">
+              <div class="tm-value">87</div>
+              <div class="tm-label">Your Score</div>
+            </div>
+            <div class="theme-metric good">
+              <div class="tm-value">91</div>
+              <div class="tm-label">Branch Avg</div>
+            </div>
+            <div class="theme-metric good">
+              <div class="tm-value">0</div>
+              <div class="tm-label">Your Claims</div>
+            </div>
+            <div class="theme-metric good">
+              <div class="tm-value">0</div>
+              <div class="tm-label">Branch Claims</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Streaks -->
+      <div class="section-title">Your Streaks</div>
+      <div class="active-streaks">
+        <div class="mini-streak">
+          <div class="mini-streak-icon">&#128293;</div>
+          <div>
+            <div class="mini-streak-num">23</div>
+            <div class="mini-streak-label">Shift Streak</div>
+          </div>
+        </div>
+        <div class="mini-streak">
+          <div class="mini-streak-icon">&#128170;</div>
+          <div>
+            <div class="mini-streak-num">12</div>
+            <div class="mini-streak-label">Damage-Free Days</div>
+          </div>
+        </div>
+        <div class="mini-streak">
+          <div class="mini-streak-icon">&#9200;</div>
+          <div>
+            <div class="mini-streak-num">8</div>
+            <div class="mini-streak-label">On-Time Streak</div>
+          </div>
+        </div>
+        <div class="mini-streak">
+          <div class="mini-streak-icon">&#11088;</div>
+          <div>
+            <div class="mini-streak-num">3</div>
+            <div class="mini-streak-label">5-Star Reviews</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Badges -->
+      <div class="section-title">Badges Earned (6 of 18)</div>
+      <div class="badge-showcase">
+        <!-- EARNED -->
+        <div class="badge-card earned">
+          <div class="bc-icon">&#128293;</div>
+          <div class="bc-name">On Fire</div>
+          <div class="bc-desc">7-day shift streak</div>
+          <div class="bc-progress">&#10003; Earned</div>
+        </div>
+        <div class="badge-card earned">
+          <div class="bc-icon">&#128737;</div>
+          <div class="bc-name">Bubble Wrap</div>
+          <div class="bc-desc">30 damage-free days</div>
+          <div class="bc-progress">&#10003; Earned</div>
+        </div>
+        <div class="badge-card earned">
+          <div class="bc-icon">&#11088;</div>
+          <div class="bc-name">Fan Favorite</div>
+          <div class="bc-desc">3 five-star reviews in a row</div>
+          <div class="bc-progress">&#10003; Earned</div>
+        </div>
+        <div class="badge-card earned">
+          <div class="bc-icon">&#127947;</div>
+          <div class="bc-name">SMART Driver</div>
+          <div class="bc-desc">Complete 6 SMART modules</div>
+          <div class="bc-progress">&#10003; Earned</div>
+        </div>
+        <div class="badge-card earned">
+          <div class="bc-icon">&#129505;</div>
+          <div class="bc-name">Hype Man</div>
+          <div class="bc-desc">Submit 5 peer praises</div>
+          <div class="bc-progress">&#10003; Earned</div>
+        </div>
+        <div class="badge-card earned">
+          <div class="bc-icon">&#128187;</div>
+          <div class="bc-name">Quiz Whiz</div>
+          <div class="bc-desc">7-day quiz streak</div>
+          <div class="bc-progress">&#10003; Earned</div>
+        </div>
+        <!-- IN PROGRESS -->
+        <div class="badge-card">
+          <div class="bc-icon">&#127755;</div>
+          <div class="bc-name">Inferno</div>
+          <div class="bc-desc">30-day shift streak</div>
+          <div class="bc-progress">23/30</div>
+        </div>
+        <div class="badge-card">
+          <div class="bc-icon">&#128176;</div>
+          <div class="bc-name">Money Moves</div>
+          <div class="bc-desc">Hit max quarterly bonus</div>
+          <div class="bc-progress">$384/$500</div>
+        </div>
+        <div class="badge-card">
+          <div class="bc-icon">&#129502;</div>
+          <div class="bc-name">Stair Master</div>
+          <div class="bc-desc">50 third-floor moves</div>
+          <div class="bc-progress">34/50</div>
+        </div>
+        <div class="badge-card">
+          <div class="bc-icon">&#127941;</div>
+          <div class="bc-name">Centurion</div>
+          <div class="bc-desc">100 moves at Einstein</div>
+          <div class="bc-progress">87/100</div>
+        </div>
+        <div class="badge-card">
+          <div class="bc-icon">&#128170;</div>
+          <div class="bc-name">Iron Hands</div>
+          <div class="bc-desc">60 damage-free days</div>
+          <div class="bc-progress">12/60</div>
+        </div>
+        <div class="badge-card">
+          <div class="bc-icon">&#129351;</div>
+          <div class="bc-name">Podium</div>
+          <div class="bc-desc">Finish top 3 in branch</div>
+          <div class="bc-progress">#4 — almost</div>
+        </div>
+        <!-- LOCKED -->
+        <div class="badge-card locked">
+          <div class="bc-icon">&#128142;</div>
+          <div class="bc-name">Perfect Quarter</div>
+          <div class="bc-desc">Zero call-outs, zero damages, all 5-star</div>
+        </div>
+        <div class="badge-card locked">
+          <div class="bc-icon">&#127942;</div>
+          <div class="bc-name">Copilot Grad</div>
+          <div class="bc-desc">Complete all 3 training stages</div>
+        </div>
+        <div class="badge-card locked">
+          <div class="bc-icon">&#128640;</div>
+          <div class="bc-name">Road Warrior</div>
+          <div class="bc-desc">2,000+ miles + 90 safety</div>
+        </div>
+        <div class="badge-card locked">
+          <div class="bc-icon">&#129309;</div>
+          <div class="bc-name">Master Trainer</div>
+          <div class="bc-desc">200 skill sign-offs given</div>
+        </div>
+        <div class="badge-card locked">
+          <div class="bc-icon">&#127911;</div>
+          <div class="bc-name">Piano Man</div>
+          <div class="bc-desc">Move 10 pianos damage-free</div>
+        </div>
+        <div class="badge-card locked">
+          <div class="bc-icon">&#128081;</div>
+          <div class="bc-name">Branch MVP</div>
+          <div class="bc-desc">Win quarterly MVP</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 3: THE SIMULATOR ==================== -->
+    <div class="screen" id="screen-simulate">
+      <div class="sim-tabs">
+        <div class="sim-tab active" onclick="switchSimTab('bonus')">Bonus</div>
+        <div class="sim-tab" onclick="switchSimTab('attendance')">Attendance</div>
+      </div>
+
+      <!-- Bonus Simulator -->
+      <div id="sim-bonus">
+        <div class="sim-big-number" id="bonusAmount">$384</div>
+        <div class="sim-trend" id="bonusTrend">+$74 vs. last quarter ($310)</div>
+
+        <div class="formula-bar" id="formulaBar">
+          <div class="seg" style="width:35%;background:var(--blue)"></div>
+          <div class="seg" style="width:25%;background:var(--green)"></div>
+          <div class="seg" style="width:25%;background:var(--orange)"></div>
+          <div class="seg" style="width:15%;background:#999"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:#999;margin-top:-16px;margin-bottom:16px">
+          <span>Safety</span><span>Attendance</span><span>DPH</span><span>Reviews</span>
+        </div>
+
+        <div class="preset-btns">
+          <div class="preset-btn" onclick="setPreset('best')">Best Case</div>
+          <div class="preset-btn active" onclick="setPreset('current')">Current</div>
+          <div class="preset-btn" onclick="setPreset('slack')">If I Slack</div>
+        </div>
+
+        <div class="sim-slider-group">
+          <div class="sim-slider-label">
+            <span>Safety Score</span>
+            <span class="impact" id="safetyImpact">87 (+$0)</span>
+          </div>
+          <input type="range" min="40" max="100" value="87" id="safetySlider" oninput="updateBonus()">
+        </div>
+
+        <div class="sim-slider-group">
+          <div class="sim-slider-label">
+            <span>Projected Hours</span>
+            <span class="impact" id="hoursImpact">480 hrs (+$0)</span>
+          </div>
+          <input type="range" min="300" max="600" value="480" id="hoursSlider" oninput="updateBonus()">
+        </div>
+
+        <div class="sim-slider-group">
+          <div class="sim-slider-label">
+            <span>DPH (Damages)</span>
+            <span class="impact" id="dphImpact">$0.45 (+$0)</span>
+          </div>
+          <input type="range" min="0" max="300" value="45" id="dphSlider" oninput="updateBonus()">
+        </div>
+
+        <div class="sim-slider-group">
+          <div class="sim-slider-label">
+            <span>Review Rate</span>
+            <span class="impact" id="reviewImpact">4.8 (+$0)</span>
+          </div>
+          <input type="range" min="30" max="50" value="48" id="reviewSlider" oninput="updateBonus()">
+        </div>
+
+        <div class="card" style="background:var(--green-light);text-align:center;padding:12px">
+          <div style="font-size:12px;color:var(--green)">Last quarter you earned <b>$310</b>. You're tracking <b>$74 higher</b>.</div>
+        </div>
+      </div>
+
+      <!-- Attendance Planner -->
+      <div id="sim-attendance" style="display:none">
+        <div class="gauge-container">
+          <svg class="gauge-svg" viewBox="0 0 240 140" id="attendanceGauge">
+            <!-- Background arc -->
+            <path d="M 30 130 A 90 90 0 0 1 210 130" fill="none" stroke="#E0E0E0" stroke-width="18" stroke-linecap="round"/>
+            <!-- Green zone -->
+            <path d="M 30 130 A 90 90 0 0 1 75 55" fill="none" stroke="var(--green)" stroke-width="18" stroke-linecap="round"/>
+            <!-- Orange zone -->
+            <path d="M 75 55 A 90 90 0 0 1 155 45" fill="none" stroke="var(--orange)" stroke-width="18" stroke-linecap="round"/>
+            <!-- Red zone -->
+            <path d="M 155 45 A 90 90 0 0 1 195 70" fill="none" stroke="var(--red)" stroke-width="18" stroke-linecap="round"/>
+            <!-- Black zone -->
+            <path d="M 195 70 A 90 90 0 0 1 210 130" fill="none" stroke="#333" stroke-width="18" stroke-linecap="round"/>
+            <!-- Needle -->
+            <line x1="120" y1="130" x2="82" y2="68" stroke="var(--dark)" stroke-width="3" stroke-linecap="round" id="gaugeNeedle"/>
+            <circle cx="120" cy="130" r="6" fill="var(--dark)"/>
+            <!-- Value -->
+            <text x="120" y="118" text-anchor="middle" font-size="28" font-weight="700" fill="var(--dark)" id="gaugeValue">1.5</text>
+            <text x="120" y="100" text-anchor="middle" font-size="11" fill="#999">points</text>
+          </svg>
+        </div>
+        <div class="gauge-label green" id="gaugeStatus">You're clear</div>
+
+        <div class="card-header" style="margin-top:16px">Point Timeline</div>
+        <div class="point-timeline">
+          <div class="point-dot expired" title="Expired"></div>
+          <div class="point-dot expired" title="Expired"></div>
+          <div class="point-dot expired" title="Expired"></div>
+          <div class="point-dot active" title="1.0 pts — active"></div>
+          <div class="point-dot expiring" title="0.5 pts — drops in 12 days"></div>
+        </div>
+        <div style="font-size:12px;color:var(--green);margin-bottom:16px">0.5 pts drop off in 12 days</div>
+
+        <div class="card-header">What if I...</div>
+        <div class="sim-buttons">
+          <button class="sim-action-btn late" onclick="simulateCallIn(0.5)">Late<br><span style="font-size:11px">+0.5 pts</span></button>
+          <button class="sim-action-btn callout" onclick="simulateCallIn(1.0)">Call-out<br><span style="font-size:11px">+1.0 pts</span></button>
+          <button class="sim-action-btn noshow" onclick="simulateCallIn(1.5)">No-show<br><span style="font-size:11px">+1.5 pts</span></button>
+        </div>
+
+        <div id="simResult" style="display:none" class="card">
+          <div style="text-align:center;font-size:14px;font-weight:600" id="simResultText"></div>
+        </div>
+
+        <div class="clean-projection">
+          If you stay clean, you'll be at <b>1.0 points</b> by April 15.
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 4: THE BOARD ==================== -->
+    <div class="screen" id="screen-board">
+      <div class="your-rank">
+        <div class="rank-num">#4</div>
+        <div class="rank-of">of 23 movers &bull; South Austin</div>
+      </div>
+
+      <div class="branch-rank">South Austin is <b>#3</b> of 10 branches</div>
+
+      <div class="cat-tabs">
+        <div class="cat-tab active" onclick="switchCategory(this)">Overall</div>
+        <div class="cat-tab" onclick="switchCategory(this)">Safety</div>
+        <div class="cat-tab" onclick="switchCategory(this)">DPH</div>
+        <div class="cat-tab" onclick="switchCategory(this)">Reviews</div>
+        <div class="cat-tab" onclick="switchCategory(this)">Quote Acc</div>
+        <div class="cat-tab" onclick="switchCategory(this)">Attendance</div>
+      </div>
+
+      <div id="leaderboardList">
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="streak-banner" style="margin-top:12px">
+        <div class="streak-num">81</div>
+        <div class="streak-label">Day Damage-Free Streak &bull; South Austin</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Road Warriors</div>
+        <div style="font-size:13px">
+          <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F0F0F0"><span>1. Diego R.</span><span style="color:var(--blue);font-weight:600">2,340 mi &bull; 94 safety</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F0F0F0"><span>2. Marcus J.</span><span style="color:var(--blue);font-weight:600">2,180 mi &bull; 87 safety</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0"><span>3. Andre T.</span><span style="color:var(--blue);font-weight:600">2,050 mi &bull; 91 safety</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 5: MY SCHEDULE ==================== -->
+    <div class="screen" id="screen-schedule">
+      <div class="schedule-toggle">
+        <div class="schedule-toggle-btn active" onclick="switchScheduleView('today', this)">Today</div>
+        <div class="schedule-toggle-btn" onclick="switchScheduleView('week', this)">This Week</div>
+      </div>
+
+      <div id="schedule-today">
+        <div class="move-card">
+          <div class="mc-time">8:00 AM</div>
+          <div class="mc-type">3BR House &rarr; Storage</div>
+          <div class="mc-detail">Leander &bull; Est. 6 hrs &bull; Truck 24</div>
+          <div class="mc-detail">2 flights of stairs &bull; Piano (upright)</div>
+          <div class="crew-avatars">
+            <div class="crew-avatar">MJ</div>
+            <div class="crew-avatar">DR</div>
+            <div class="crew-avatar">KP</div>
+          </div>
+        </div>
+
+        <div style="text-align:center;padding:8px;font-size:12px;color:#999">
+          ~30 min travel
+        </div>
+
+        <div class="move-card">
+          <div class="mc-time">2:00 PM</div>
+          <div class="mc-type">1BR Apartment &rarr; 2BR House</div>
+          <div class="mc-detail">N. Austin &bull; Est. 3 hrs &bull; Truck 24</div>
+          <div class="mc-detail">2nd floor walk-up &bull; No special items</div>
+          <div class="crew-avatars">
+            <div class="crew-avatar">MJ</div>
+            <div class="crew-avatar">DR</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="schedule-week" style="display:none">
+        <div class="card">
+          <div class="week-row"><div class="week-day">Mon</div><div class="week-info">2 moves</div><div class="week-hrs">9 hrs</div></div>
+          <div class="week-row"><div class="week-day">Tue</div><div class="week-info">3 moves</div><div class="week-hrs">10 hrs</div></div>
+          <div class="week-row"><div class="week-day">Wed</div><div class="week-info off">OFF</div><div class="week-hrs"></div></div>
+          <div class="week-row"><div class="week-day">Thu</div><div class="week-info">2 moves</div><div class="week-hrs">8 hrs</div></div>
+          <div class="week-row"><div class="week-day">Fri</div><div class="week-info">2 moves</div><div class="week-hrs">9 hrs</div></div>
+          <div class="week-row"><div class="week-day">Sat</div><div class="week-info">1 move</div><div class="week-hrs">6 hrs</div></div>
+        </div>
+      </div>
+
+      <div class="hours-bar" style="margin-top:12px">
+        <div>
+          <div class="hb-num">32</div>
+          <div class="hb-label">This Week</div>
+        </div>
+        <div>
+          <div class="hb-num">42</div>
+          <div class="hb-label">Projected</div>
+        </div>
+        <div>
+          <div class="hb-num">410</div>
+          <div class="hb-label">Quarter</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 6: LEVEL UP ==================== -->
+    <div class="screen" id="screen-levelup">
+      <div class="card">
+        <div class="card-header">Career Path</div>
+        <div class="career-trail">
+          <div class="career-node completed">
+            <div class="cn-title">Copilot</div>
+            <div class="cn-pay">Starting rate</div>
+            <div class="cn-status">Completed</div>
+          </div>
+          <div class="career-node current">
+            <div class="cn-title">Junior Lead</div>
+            <div class="cn-pay">$18.50/hr + $1.75 bonus</div>
+            <div class="cn-status">Current level</div>
+          </div>
+          <div class="career-node locked">
+            <div class="cn-title">Lead</div>
+            <div class="cn-pay" style="color:#999">$19.00/hr + $2.00 bonus</div>
+          </div>
+          <div class="career-node locked">
+            <div class="cn-title">Senior Lead</div>
+            <div class="cn-pay" style="color:#999">$19.50/hr + $2.25 bonus</div>
+          </div>
+          <div class="career-node locked">
+            <div class="cn-title">Master Lead</div>
+            <div class="cn-pay" style="color:#999">$19.50/hr + $3.00 bonus</div>
+          </div>
+          <div class="career-node locked">
+            <div class="cn-title">Lead General</div>
+            <div class="cn-pay" style="color:#999">$19.50/hr + $3.75 bonus &bull; "Genius Status"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Next Level: Lead</div>
+        <div style="font-size:13px;color:var(--green);font-weight:600;margin-bottom:8px">+$0.50/hr &bull; +$0.25 bonus</div>
+        <ul class="req-list">
+          <li><div class="req-check done">&#10003;</div> Safety score above 80 for 3 months</li>
+          <li><div class="req-check done">&#10003;</div> DPH below $1.23 for 60 days</li>
+          <li><div class="req-check pending">&#183;</div> 500 hours logged <span style="color:#999;margin-left:4px">(410/500 — 82%)</span></li>
+          <li><div class="req-check pending">&#183;</div> SMART Driving complete <span style="color:#999;margin-left:4px">(6/8)</span></li>
+          <li><div class="req-check pending">&#183;</div> Copilot Training complete <span style="color:#999;margin-left:4px">(5/8 sprints)</span></li>
+          <li><div class="req-check pending">&#183;</div> Manager recommendation</li>
+        </ul>
+        <div class="progress-bar" style="margin-top:8px"><div class="fill orange" style="width:55%"></div></div>
+        <div style="text-align:center;font-size:12px;color:#999;margin-top:4px">55% complete</div>
+      </div>
+
+      <div class="training-tabs">
+        <div class="training-tab active" onclick="switchTrainingTab('guide', this)">Training Guide</div>
+        <div class="training-tab" onclick="switchTrainingTab('smart', this)">SMART Driving</div>
+      </div>
+
+      <!-- Training Guide (Digital Booklet) -->
+      <div id="training-guide">
+        <div style="font-size:12px;color:#999;margin-bottom:10px;line-height:1.4">
+          Your digital training guide. Each skill must be demonstrated twice and signed off by a lead. Manager review between stages.
+        </div>
+
+        <!-- Stage 1: The Basics -->
+        <div class="stage-card">
+          <div class="stage-header completed" onclick="toggleStage('stage1')">
+            Stage 1: The Basics
+            <span class="stage-progress">7/7 &bull; Complete</span>
+          </div>
+          <div class="stage-body" id="stage1" style="display:none">
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Administrative (clock in/out, hours, schedule) <div class="skill-sigs">2/2</div></div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Backup Signals (ground guide your driver) <div class="skill-sigs">2/2</div></div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Truck Checks <div class="skill-sigs">2/2</div></div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Morning Truck Duties (alerts, equipment, pads) <div class="skill-sigs">2/2</div></div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Protection (doors, floor runners) <div class="skill-sigs">2/2</div></div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Ramp Etiquette (loading, unloading, pin) <div class="skill-sigs">2/2</div></div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Clean Up &amp; Resecure Equipment <div class="skill-sigs">2/2</div></div>
+          </div>
+        </div>
+
+        <div class="gate-card">
+          <div class="gate-title">&#10003; Manager Status Review Passed</div>
+          <div class="gate-sub">Attitude, Punctuality, Communication, Service, Teamwork &bull; 2/14/2026</div>
+        </div>
+
+        <!-- Stage 2: Co-Pilot Skills -->
+        <div class="stage-card">
+          <div class="stage-header" onclick="toggleStage('stage2')" style="background:var(--orange)">
+            Stage 2: Co-Pilot Skills
+            <span class="stage-progress">18/22 &bull; In Progress</span>
+          </div>
+          <div class="stage-body" id="stage2">
+            <div style="font-size:11px;color:var(--blue);font-weight:600;margin-bottom:6px">CO-PILOT RESPONSIBILITIES</div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Handle calls to clients, check in w/ mgmt <div class="skill-sigs">2/2</div></div>
+
+            <div style="font-size:11px;color:var(--blue);font-weight:600;margin:10px 0 6px">WRAPPING / LOADING</div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Wrap &amp; move a dresser <div class="skill-sigs">2/2</div></div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Wrap &amp; move a nightstand <div class="skill-sigs">2/2</div></div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Wrap &amp; move a coffee/side table <div class="skill-sigs">2/2</div></div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Wrap (hog tie) &amp; load a chair <div class="skill-sigs">2/2</div></div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Use shrink wrap properly <div class="skill-sigs">2/2</div></div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Wrap &amp; secure a lamp/fragile item <div class="skill-sigs">2/2</div></div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Wrap, move &amp; secure a TV <div class="skill-sigs">2/2</div></div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Wrap &amp; move a dining room table <div class="skill-sigs">2/2</div></div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Wrap, move &amp; secure a couch <div class="skill-sigs">2/2</div></div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Properly load a truck <div class="skill-sigs">2/2</div></div>
+            <div class="skill-item" style="cursor:pointer" onclick="openSkillDetail('Wrap & secure a washer/dryer', 'in-progress', 1)"><div class="skill-check half">1</div> Wrap &amp; secure a washer/dryer <div class="skill-sigs">1/2 &#8250;</div></div>
+            <div class="skill-item" style="cursor:pointer" onclick="openSkillDetail('Wrap & secure a fridge', 'not-started', 0)"><div class="skill-check">&#183;</div> Wrap &amp; secure a fridge <div class="skill-sigs">0/2 &#8250;</div></div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Wrap a bookcase/entertainment center <div class="skill-sigs">2/2</div></div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Gondola loading/unloading <div class="skill-sigs">2/2</div></div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Stacking Boxes (heavy bottom, light top) <div class="skill-sigs">2/2</div></div>
+
+            <div style="font-size:11px;color:var(--blue);font-weight:600;margin:10px 0 6px">DISASSEMBLY / REASSEMBLY</div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Disassemble &amp; reassemble a bed <div class="skill-sigs">2/2</div></div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Disassemble &amp; reassemble a table <div class="skill-sigs">2/2</div></div>
+            <div class="skill-item" style="cursor:pointer" onclick="openSkillDetail('Disassemble & reassemble a mirror on a dresser', 'not-started', 0)"><div class="skill-check">&#183;</div> Disassemble &amp; reassemble a mirror/dresser <div class="skill-sigs">0/2 &#8250;</div></div>
+            <div class="skill-item" style="cursor:pointer" onclick="openSkillDetail('Disassemble & reassemble a desk', 'not-started', 0)"><div class="skill-check">&#183;</div> Disassemble &amp; reassemble a desk <div class="skill-sigs">0/2 &#8250;</div></div>
+
+            <div style="font-size:11px;color:var(--blue);font-weight:600;margin:10px 0 6px">PACKING</div>
+            <div class="skill-item" style="cursor:pointer" onclick="openSkillDetail('Properly pack dishes', 'in-progress', 1)"><div class="skill-check half">1</div> Properly pack dishes <div class="skill-sigs">1/2 &#8250;</div></div>
+            <div class="skill-item"><div class="skill-check done">&#10003;</div> Properly pack fragile items <div class="skill-sigs">2/2</div></div>
+
+            <div style="font-size:11px;color:var(--blue);font-weight:600;margin:10px 0 6px">DRIVING HOURS</div>
+            <div class="drive-hours-bar">
+              <div class="dh-label">Drive Hrs</div>
+              <div class="dh-progress"><div class="progress-bar"><div class="fill blue" style="width:70%"></div></div></div>
+              <div class="dh-count">7 / 10 hrs</div>
+            </div>
+            <div style="font-size:11px;color:#999">Log only actual drive time. One section per day.</div>
+          </div>
+        </div>
+
+        <div class="gate-card">
+          <div class="gate-title">&#9888; Manager Status Review — Pending</div>
+          <div class="gate-sub">Complete Stage 2 skills to unlock review. Ratings: Attitude, Punctuality, Communication, Service, Teamwork.</div>
+        </div>
+
+        <!-- Stage 3: Lead Skills -->
+        <div class="stage-card">
+          <div class="stage-header locked" onclick="toggleStage('stage3')">
+            Stage 3: Lead Skills
+            <span class="stage-progress">Locked</span>
+          </div>
+          <div class="stage-body" id="stage3" style="display:none">
+            <div class="skill-item" style="opacity:0.5"><div class="skill-check">&#183;</div> Fill out a move contract</div>
+            <div class="skill-item" style="opacity:0.5"><div class="skill-check">&#183;</div> Explain non-moveable items</div>
+            <div class="skill-item" style="opacity:0.5"><div class="skill-check">&#183;</div> Conduct a walk-through (damages, waivers)</div>
+            <div class="skill-item" style="opacity:0.5"><div class="skill-check">&#183;</div> Provide an accurate estimate</div>
+            <div class="skill-item" style="opacity:0.5"><div class="skill-check">&#183;</div> Walk a client through the contract</div>
+            <div class="skill-item" style="opacity:0.5"><div class="skill-check">&#183;</div> Handle a damage properly</div>
+            <div class="skill-item" style="opacity:0.5"><div class="skill-check">&#183;</div> Explain a liability waiver</div>
+            <div class="skill-item" style="opacity:0.5"><div class="skill-check">&#183;</div> Disconnect/connect washer &amp; dryer</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SMART Driving (existing video modules) -->
+      <div id="training-smart" style="display:none">
+        <div class="module-card"><div class="module-num done">&#10003;</div><div class="module-info"><div class="mi-title">1. Intro to SMART Driving</div><div class="mi-sub">15 min &bull; Complete</div></div></div>
+        <div class="module-card"><div class="module-num done">&#10003;</div><div class="module-info"><div class="mi-title">2. Scan Your Surroundings</div><div class="mi-sub">20 min &bull; Complete</div></div></div>
+        <div class="module-card"><div class="module-num done">&#10003;</div><div class="module-info"><div class="mi-title">3. Maintain Your Distance</div><div class="mi-sub">18 min &bull; Complete</div></div></div>
+        <div class="module-card"><div class="module-num done">&#10003;</div><div class="module-info"><div class="mi-title">4. Anticipate Ahead</div><div class="mi-sub">22 min &bull; Complete</div></div></div>
+        <div class="module-card"><div class="module-num done">&#10003;</div><div class="module-info"><div class="mi-title">5. Recognize Your Position</div><div class="mi-sub">20 min &bull; Complete</div></div></div>
+        <div class="module-card"><div class="module-num done">&#10003;</div><div class="module-info"><div class="mi-title">6. Track Everything</div><div class="mi-sub">25 min &bull; Complete</div></div></div>
+        <div class="module-card"><div class="module-num">7</div><div class="module-info"><div class="mi-title">7. SMART Habits Summary</div><div class="mi-sub">15 min &bull; Not started</div></div></div>
+        <div class="module-card"><div class="module-num">8</div><div class="module-info"><div class="mi-title">8. Safe Backing Protocols</div><div class="mi-sub">20 min &bull; Not started</div></div></div>
+      </div>
+
+      <div class="section-title">Badges</div>
+      <div style="text-align:center;padding:8px;font-size:13px;color:var(--blue);cursor:pointer" onclick="navigateTo('stats')">
+        6 badges earned &bull; View all 18 &#8594;
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 7: THE FEED ==================== -->
+    <div class="screen" id="screen-feed">
+      <div class="feed-stats">
+        <div class="feed-stat"><div class="fs-num">22</div><div class="fs-label">Reviews (4.8 avg)</div></div>
+        <div class="feed-stat"><div class="fs-num">3</div><div class="fs-label">Praises</div></div>
+        <div class="feed-stat"><div class="fs-num">2</div><div class="fs-label">Milestones</div></div>
+      </div>
+
+      <div class="feed-filters">
+        <div class="feed-filter active" onclick="switchFeedFilter(this)">All</div>
+        <div class="feed-filter" onclick="switchFeedFilter(this)">Reviews</div>
+        <div class="feed-filter" onclick="switchFeedFilter(this)">Praises</div>
+        <div class="feed-filter" onclick="switchFeedFilter(this)">Milestones</div>
+      </div>
+
+      <div class="feed-item">
+        <div class="fi-type review">&#9733; Customer Review</div>
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <div class="fi-content">"Marcus and his team were absolutely incredible. They handled our piano like it was made of glass. Would hire again in a heartbeat!"</div>
+        <div class="fi-meta">Sarah M. &bull; 2 days ago</div>
+      </div>
+
+      <div class="feed-item">
+        <div class="fi-type milestone">&#127942; Milestone</div>
+        <div class="fi-content" style="font-weight:600;font-size:16px">30-Day Damage-Free Streak!</div>
+        <div class="fi-meta">Earned March 18, 2026</div>
+      </div>
+
+      <div class="feed-item">
+        <div class="fi-type praise">&#129305; Peer Praise</div>
+        <div class="fi-content">"Marcus showed Diego the ropes on his first solo lead job. Stayed calm, coached through the tough spots. That's leadership."</div>
+        <div class="fi-meta">Chris Anderson (BM) &bull; Teamwork &bull; 5 days ago</div>
+      </div>
+
+      <div class="feed-item">
+        <div class="fi-type review">&#9733; Customer Review</div>
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <div class="fi-content">"Showed up on time, wrapped everything carefully, and even reassembled our bed frame. Super professional."</div>
+        <div class="fi-meta">Jason T. &bull; 1 week ago</div>
+      </div>
+
+      <div class="feed-item">
+        <div class="fi-type praise">&#129305; Manager Recognition</div>
+        <div class="fi-content">"Highest quote accuracy on the team this month. Marcus is dialing it in."</div>
+        <div class="fi-meta">Chris Anderson &bull; Excellence &bull; 1 week ago</div>
+      </div>
+
+      <div class="feed-item">
+        <div class="fi-type milestone">&#127942; Milestone</div>
+        <div class="fi-content" style="font-weight:600;font-size:16px">100th Move at Einstein!</div>
+        <div class="fi-meta">Earned March 10, 2026</div>
+      </div>
+    </div>
+
+    <!-- ==================== SCREEN 8: BRANCH HOME ==================== -->
+    <div class="screen" id="screen-branch">
+      <div class="announcement-card">
+        <div class="ac-title">Q1 Theme: Driver's Ed</div>
+        <div class="ac-body">Big Bubble Energy is about getting home safe every night. South Austin: 0 claims in 6 weeks. Keep it going.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Branch Safety</div>
+        <div class="safety-gauge-mini">
+          <div class="sgm-num" style="color:var(--green)">91</div>
+          <div class="sgm-label">South Austin Safety Score &bull; #2 of 10</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Upcoming</div>
+        <ul class="events-list">
+          <li class="event-item">
+            <div class="event-date"><div class="ed-month">Mar</div><div class="ed-day">28</div></div>
+            <div>Payday</div>
+          </li>
+          <li class="event-item">
+            <div class="event-date"><div class="ed-month">Apr</div><div class="ed-day">2</div></div>
+            <div>All Manager Conference &bull; Waco</div>
+          </li>
+          <li class="event-item">
+            <div class="event-date"><div class="ed-month">Apr</div><div class="ed-day">5</div></div>
+            <div>Diego R. Birthday</div>
+          </li>
+          <li class="event-item">
+            <div class="event-date"><div class="ed-month">Apr</div><div class="ed-day">12</div></div>
+            <div>Payday</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="streak-banner">
+        <div class="streak-num">81</div>
+        <div class="streak-label">Day Damage-Free Streak</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Quarterly MVP</div>
+        <div style="text-align:center;padding:12px">
+          <div style="font-size:18px;font-weight:700">Diego Rodriguez</div>
+          <div style="font-size:13px;color:#999;margin-top:4px">Safety: 94 &bull; DPH: $0.22 &bull; Reviews: 4.9&#9733;</div>
+          <div style="font-size:13px;color:var(--orange);margin-top:6px;font-weight:600">Road Warrior &bull; Damage Free 60 Days</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Recent Reviews</div>
+        <div style="font-size:13px">
+          <div style="padding:8px 0;border-bottom:1px solid #F0F0F0">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            <div style="margin-top:4px">"Fastest, most careful movers we've ever used." — Lisa K.</div>
+          </div>
+          <div style="padding:8px 0;border-bottom:1px solid #F0F0F0">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            <div style="margin-top:4px">"They wrapped every piece of furniture. Amazing attention to detail." — Mike P.</div>
+          </div>
+          <div style="padding:8px 0">
+            <span class="stars">&#9733;&#9733;&#9733;&#9733;</span><span style="color:#E0E0E0">&#9733;</span>
+            <div style="margin-top:4px">"Great crew. Minor scratch on doorframe but handled it professionally." — Rachel S.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Team Praise</div>
+        <div style="font-size:13px;padding:8px 0">
+          <div style="font-weight:600;color:var(--orange)">Teamwork</div>
+          <div style="margin-top:4px">"Andre stayed 2 extra hours to help the evening crew finish a tough 5BR. That's what it's about."</div>
+          <div style="color:#999;margin-top:4px">— Marcus J. &bull; 3 days ago</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /screen-area -->
+
+  <!-- More Sheet Overlay -->
+  <div class="overlay" id="moreOverlay" onclick="closeMore()"></div>
+  <div class="more-nav-sheet" id="moreSheet">
+    <div class="more-item" onclick="navigateTo('levelup');closeMore()">
+      <div class="more-icon" style="background:var(--blue-light);color:var(--blue)">&#127947;</div>
+      Level Up
+    </div>
+    <div class="more-item" onclick="navigateTo('feed');closeMore()">
+      <div class="more-icon" style="background:var(--green-light);color:var(--green)">&#128172;</div>
+      The Feed
+    </div>
+    <div class="more-item" onclick="navigateTo('branch');closeMore()">
+      <div class="more-icon" style="background:var(--orange-light);color:var(--orange)">&#127968;</div>
+      Branch Home
+    </div>
+  </div>
+
+  <!-- Ask Einstein FAB -->
+  <button class="ask-fab" onclick="openAskEinstein()" title="Ask Einstein">&#129504;</button>
+
+  <!-- Ask Einstein Chat Sheet -->
+  <div class="ask-overlay" id="askOverlay" onclick="closeAskEinstein()"></div>
+  <div class="ask-sheet" id="askSheet">
+    <div class="ask-header">
+      <div class="ask-mascot">&#129504;</div>
+      <div class="ask-title">Ask Einstein</div>
+      <button class="ask-close-btn" onclick="closeAskEinstein()">&times;</button>
+    </div>
+    <div class="ask-messages" id="askMessages">
+      <div class="ask-msg bot">
+        Hey Marcus! I know the Code of Geniuses, training procedures, and Einstein policies inside and out. What can I help with?
+        <div class="ask-suggestions">
+          <div class="ask-suggestion" onclick="askQuestion('How do I move a grandfather clock?')">Grandfather clock?</div>
+          <div class="ask-suggestion" onclick="askQuestion('How do I disconnect a washer?')">Disconnect a washer?</div>
+          <div class="ask-suggestion" onclick="askQuestion('Can we go into this attic?')">Attic policy?</div>
+          <div class="ask-suggestion" onclick="askQuestion('How do I check my attendance points?')">My attendance points?</div>
+          <div class="ask-suggestion" onclick="askQuestion('What are DNR days?')">What are DNR days?</div>
+          <div class="ask-suggestion" onclick="askQuestion('How do I request a day off?')">Request day off?</div>
+        </div>
+      </div>
+    </div>
+    <div class="ask-input-bar">
+      <input class="ask-input" id="askInput" type="text" placeholder="Ask anything about moving or policies..." onkeydown="if(event.key==='Enter')sendAskQuestion()">
+      <button class="ask-send" onclick="sendAskQuestion()">&#8593;</button>
+    </div>
+  </div>
+
+  <!-- Milestone Celebration -->
+  <div class="milestone-overlay" id="milestoneOverlay" onclick="closeMilestone()">
+    <div class="confetti-container" id="confettiContainer"></div>
+    <div class="milestone-card" onclick="event.stopPropagation()">
+      <div class="milestone-glow"></div>
+      <div class="milestone-mascot">&#129504;</div>
+      <div class="milestone-streak-num">23</div>
+      <div class="milestone-title">Day Streak!</div>
+      <div class="milestone-sub">That's almost a month straight. You're 7 days from your new personal best. Keep showing up, Marcus.</div>
+      <button class="milestone-btn" onclick="closeMilestone()">LET'S GO &#128293;</button>
+    </div>
+  </div>
+
+  <!-- Skill Detail Sheet -->
+  <div class="skill-detail-overlay" id="skillOverlay" onclick="closeSkillDetail()"></div>
+  <div class="skill-detail-sheet" id="skillSheet">
+    <button class="sd-close" onclick="closeSkillDetail()">&times;</button>
+    <div class="sd-title" id="sdTitle">Wrap &amp; secure a washer/dryer</div>
+    <div class="sd-status" id="sdStatus" style="color:var(--orange)">In Progress &bull; 1 of 2 sign-offs</div>
+
+    <div class="sd-section-title">Training Video</div>
+    <div class="sd-video-placeholder">
+      <div class="play-btn">&#9654;</div>
+      <div style="font-size:12px;opacity:0.7">Washer/Dryer Wrapping &amp; Moving (4:32)</div>
+    </div>
+
+    <div class="sd-section-title">Instructions</div>
+    <div class="sd-instructions">
+      <ol style="padding-left:16px">
+        <li>Disconnect water supply lines and power cord. Cap open water connections.</li>
+        <li>Secure the drum — use transit bolts if available, or pack towels inside.</li>
+        <li>Wrap with moving blankets, secure with shrink wrap (no tape on surfaces).</li>
+        <li>Use appliance dolly — strap at top and bottom.</li>
+        <li>On the truck: stand upright, strap to wall. Never lay a washer on its side.</li>
+        <li>At destination: reconnect, check for leaks, run a test cycle if possible.</li>
+        <li><b>For front-load washers:</b> Check for safety bolts on the back.</li>
+      </ol>
+    </div>
+
+    <div class="sd-section-title">Photo Proof (optional)</div>
+    <div class="sd-photo-area">
+      <div class="photo-icon">&#128247;</div>
+      <div class="photo-text">Tap to take a photo of the completed wrap</div>
+    </div>
+
+    <div class="sd-section-title">Sign-Off History</div>
+    <div class="sd-history">
+      <div class="sd-history-item">
+        <div class="sd-history-check">&#10003;</div>
+        <div><b>Sign-off #1:</b> Diego R. (Lead) &bull; 3/15/2026</div>
+      </div>
+      <div class="sd-history-item">
+        <div style="width:16px;height:16px;border-radius:50%;border:2px solid #E0E0E0"></div>
+        <div style="color:#999">Sign-off #2: Not yet completed</div>
+      </div>
+    </div>
+
+    <div class="sd-section-title">Get Sign-Off</div>
+    <div class="sd-signoff">
+      <div class="sd-signoff-title">Ready for sign-off #2?</div>
+      <div style="font-size:12px;color:#999;margin-bottom:12px">Show your lead that you've completed this skill. They'll confirm on your phone.</div>
+      <div class="sd-signoff-options">
+        <button class="sd-signoff-btn" onclick="demoSignoff(this)">
+          Lead enters PIN to confirm
+          <div class="btn-desc">Hand your phone to your lead — they enter their 4-digit PIN</div>
+        </button>
+        <button class="sd-signoff-btn" onclick="demoSignoff(this)">
+          Lead scans QR code
+          <div class="btn-desc">Show the QR code to your lead — they scan from their phone</div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="navigateTo('pulse')" data-screen="pulse">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+      Pulse
+    </div>
+    <div class="nav-item" onclick="navigateTo('simulate')" data-screen="simulate">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
+      Simulate
+    </div>
+    <div class="nav-item" onclick="navigateTo('board')" data-screen="board">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.5 21H2V9h5.5v12zm7.25-18h-5.5v18h5.5V3zM22 11h-5.5v10H22V11z"/></svg>
+      Board
+    </div>
+    <div class="nav-item" onclick="navigateTo('schedule')" data-screen="schedule">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
+      Schedule
+    </div>
+    <div class="nav-item" onclick="toggleMore()" data-screen="more">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+      More
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== ONBOARDING ==========
+function checkObReady() {
+  const branch = document.getElementById('obBranch').value;
+  const name = document.getElementById('obName').value;
+  document.getElementById('obGoBtn').disabled = !(branch && name);
+}
+
+const tooltipSteps = [
+  {
+    target: '.stat-grid',
+    text: 'These are your key numbers. Green = crushing it. Tap any tile for the full breakdown.',
+    position: 'below',
+    btn: 'Got it'
+  },
+  {
+    target: '.streak-card-primary',
+    text: '&#128293; Your shift streak — consecutive days you\'ve shown up. The longer you go, the bigger the flame gets.',
+    position: 'below',
+    btn: 'Nice'
+  },
+  {
+    target: '.bonus-card',
+    text: 'Your projected bonus. Tap to open the Simulator — move the sliders and watch the number change in real time.',
+    position: 'above',
+    btn: 'Let\'s go'
+  }
+];
+let currentTooltipStep = 0;
+
+function completeOnboarding() {
+  document.getElementById('onboardingOverlay').classList.add('hidden');
+  currentTooltipStep = 0;
+  showTooltipStep();
+}
+
+function skipOnboarding() {
+  document.getElementById('onboardingOverlay').classList.add('hidden');
+}
+
+function showTooltipStep() {
+  if (currentTooltipStep >= tooltipSteps.length) {
+    finishTooltips();
+    return;
+  }
+  const step = tooltipSteps[currentTooltipStep];
+  const targetEl = document.querySelector(step.target);
+  const tooltip = document.getElementById('activeTooltip');
+  const layer = document.getElementById('tooltipLayer');
+  const frame = document.querySelector('.phone-frame');
+  const screenArea = document.getElementById('screenArea');
+
+  if (!targetEl) { currentTooltipStep++; showTooltipStep(); return; }
+
+  // Scroll the target into view first
+  targetEl.scrollIntoView({ behavior: 'instant', block: 'center' });
+
+  // Small delay to let scroll settle, then position tooltip
+  setTimeout(() => {
+    layer.classList.add('active');
+
+    const frameRect = frame.getBoundingClientRect();
+    const targetRect = targetEl.getBoundingClientRect();
+    const relTop = targetRect.top - frameRect.top;
+
+    tooltip.style.display = 'block';
+    tooltip.style.left = '20px';
+    tooltip.style.right = '20px';
+    tooltip.className = 'ob-tooltip';
+
+    if (step.position === 'below') {
+      const pos = relTop + targetRect.height + 12;
+      // Clamp so tooltip stays visible within the frame
+      tooltip.style.top = Math.min(pos, frameRect.height - 120) + 'px';
+      tooltip.style.bottom = 'auto';
+      tooltip.classList.add('arrow-up');
+    } else {
+      const pos = frameRect.height - relTop + 12;
+      tooltip.style.top = 'auto';
+      tooltip.style.bottom = Math.max(pos, 80) + 'px';
+      tooltip.classList.add('arrow-down');
+    }
+
+    tooltip.innerHTML = step.text + '<br><button class="ob-dismiss" onclick="advanceTooltip()">' + step.btn + '</button>';
+
+    // Highlight the target
+    targetEl.style.position = 'relative';
+    targetEl.style.zIndex = '41';
+    targetEl.style.pointerEvents = 'none';
+  }, 100);
+}
+
+function advanceTooltip() {
+  // Remove highlight from previous target
+  const prevStep = tooltipSteps[currentTooltipStep];
+  if (prevStep) {
+    const prevEl = document.querySelector(prevStep.target);
+    if (prevEl) { prevEl.style.zIndex = ''; prevEl.style.pointerEvents = ''; }
+  }
+  currentTooltipStep++;
+  showTooltipStep();
+}
+
+function finishTooltips() {
+  document.getElementById('tooltipLayer').classList.remove('active');
+  document.getElementById('activeTooltip').style.display = 'none';
+  // Clean up any z-index overrides
+  tooltipSteps.forEach(s => {
+    const el = document.querySelector(s.target);
+    if (el) { el.style.zIndex = ''; el.style.pointerEvents = ''; }
+  });
+}
+
+// ========== NAVIGATION ==========
+const screens = ['pulse','stats','simulate','board','schedule','levelup','feed','branch'];
+const navScreens = ['pulse','simulate','board','schedule'];
+const headerTitles = {
+  pulse: 'Hey Marcus',
+  stats: 'My Stats',
+  simulate: 'The Simulator',
+  board: 'The Board',
+  schedule: 'My Schedule',
+  levelup: 'Level Up',
+  feed: 'The Feed',
+  branch: 'Branch Home'
+};
+const headerSubs = {
+  pulse: 'Lead Mover \u2022 South Austin \u2022 1 yr 4 mo',
+  stats: 'Deep dive into your performance',
+  simulate: 'What happens if...',
+  board: 'Leaderboard & Games',
+  schedule: 'Your moves & hours',
+  levelup: 'Career & Training',
+  feed: 'Recognition & Reviews',
+  branch: 'South Austin'
+};
+
+function navigateTo(screen) {
+  // Hide all screens
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + screen).classList.add('active');
+
+  // Update header
+  document.getElementById('headerTitle').textContent = headerTitles[screen];
+  document.getElementById('headerSub').textContent = headerSubs[screen];
+
+  // Update nav
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navTarget = navScreens.includes(screen) ? screen : 'more';
+  document.querySelector('.nav-item[data-screen="' + navTarget + '"]')?.classList.add('active');
+
+  // Scroll to top
+  document.getElementById('screenArea').scrollTop = 0;
+}
+
+function toggleMore() {
+  const sheet = document.getElementById('moreSheet');
+  const overlay = document.getElementById('moreOverlay');
+  sheet.classList.toggle('open');
+  overlay.classList.toggle('open');
+}
+function closeMore() {
+  document.getElementById('moreSheet').classList.remove('open');
+  document.getElementById('moreOverlay').classList.remove('open');
+}
+
+// ========== BONUS SIMULATOR ==========
+const BASE_BONUS = 384;
+const baseSafety = 87, baseHours = 480, baseDph = 45, baseReview = 48;
+
+function updateBonus() {
+  const safety = parseInt(document.getElementById('safetySlider').value);
+  const hours = parseInt(document.getElementById('hoursSlider').value);
+  const dph = parseInt(document.getElementById('dphSlider').value);
+  const review = parseInt(document.getElementById('reviewSlider').value);
+
+  // Simple model: each slider contributes a delta
+  const safetyDelta = (safety - baseSafety) * 2.5;
+  const hoursDelta = (hours - baseHours) * 0.5;
+  const dphDelta = (baseDph - dph) * 1.8;  // Lower DPH = better
+  const reviewDelta = (review - baseReview) * 5;
+
+  const total = Math.round(BASE_BONUS + safetyDelta + hoursDelta + dphDelta + reviewDelta);
+
+  document.getElementById('bonusAmount').textContent = '$' + total;
+
+  // Update impacts
+  updateImpact('safetyImpact', safety, safetyDelta, '');
+  updateImpact('hoursImpact', hours + ' hrs', hoursDelta, '');
+  updateImpact('dphImpact', '$' + (dph / 100).toFixed(2), dphDelta, '');
+  updateImpact('reviewImpact', (review / 10).toFixed(1), reviewDelta, '');
+
+  const diff = total - 310;
+  document.getElementById('bonusTrend').textContent = (diff >= 0 ? '+' : '') + '$' + diff + ' vs. last quarter ($310)';
+  document.getElementById('bonusTrend').style.color = diff >= 0 ? 'var(--green)' : 'var(--red)';
+
+  // Update formula bar proportions
+  const totalContrib = Math.abs(safetyDelta) + Math.abs(hoursDelta) + Math.abs(dphDelta) + Math.abs(reviewDelta) + 100;
+  const fb = document.getElementById('formulaBar');
+  fb.children[0].style.width = Math.max(10, 35 + safetyDelta/5) + '%';
+  fb.children[1].style.width = Math.max(10, 25 + hoursDelta/10) + '%';
+  fb.children[2].style.width = Math.max(10, 25 + dphDelta/5) + '%';
+  fb.children[3].style.width = Math.max(10, 15 + reviewDelta/5) + '%';
+
+  // Reset presets
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+}
+
+function updateImpact(id, display, delta, suffix) {
+  const el = document.getElementById(id);
+  const d = Math.round(delta);
+  const sign = d >= 0 ? '+' : '';
+  el.textContent = display + ' (' + sign + '$' + d + ')';
+  el.className = 'impact' + (d < 0 ? ' neg' : '');
+}
+
+function setPreset(type) {
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  if (type === 'best') {
+    document.getElementById('safetySlider').value = 98;
+    document.getElementById('hoursSlider').value = 560;
+    document.getElementById('dphSlider').value = 0;
+    document.getElementById('reviewSlider').value = 50;
+  } else if (type === 'current') {
+    document.getElementById('safetySlider').value = baseSafety;
+    document.getElementById('hoursSlider').value = baseHours;
+    document.getElementById('dphSlider').value = baseDph;
+    document.getElementById('reviewSlider').value = baseReview;
+  } else {
+    document.getElementById('safetySlider').value = 65;
+    document.getElementById('hoursSlider').value = 380;
+    document.getElementById('dphSlider').value = 180;
+    document.getElementById('reviewSlider').value = 38;
+  }
+  updateBonus();
+}
+
+// ========== SIMULATOR TABS ==========
+function switchSimTab(tab) {
+  document.querySelectorAll('.sim-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('sim-bonus').style.display = tab === 'bonus' ? 'block' : 'none';
+  document.getElementById('sim-attendance').style.display = tab === 'attendance' ? 'block' : 'none';
+}
+
+// ========== ATTENDANCE SIMULATOR ==========
+let currentPoints = 1.5;
+
+function simulateCallIn(pts) {
+  const newPts = currentPoints + pts;
+  const gaugeValue = document.getElementById('gaugeValue');
+  const gaugeStatus = document.getElementById('gaugeStatus');
+  const simResult = document.getElementById('simResult');
+  const simResultText = document.getElementById('simResultText');
+
+  gaugeValue.textContent = newPts.toFixed(1);
+
+  // Update needle angle (0pts = -90deg, 6pts = 90deg)
+  const angle = -90 + (newPts / 6) * 180;
+  const rad = angle * Math.PI / 180;
+  const nx = 120 + 55 * Math.sin(rad);
+  const ny = 130 - 55 * Math.cos(rad);
+  document.getElementById('gaugeNeedle').setAttribute('x2', nx);
+  document.getElementById('gaugeNeedle').setAttribute('y2', ny);
+
+  // Update status
+  if (newPts <= 2) {
+    gaugeStatus.textContent = "You're clear";
+    gaugeStatus.className = 'gauge-label green';
+  } else if (newPts <= 4) {
+    gaugeStatus.textContent = 'Watch it';
+    gaugeStatus.className = 'gauge-label orange';
+  } else if (newPts <= 5.5) {
+    gaugeStatus.textContent = 'Danger zone';
+    gaugeStatus.className = 'gauge-label red';
+  } else {
+    gaugeStatus.textContent = 'Termination risk';
+    gaugeStatus.className = 'gauge-label red';
+  }
+
+  simResult.style.display = 'block';
+  if (newPts >= 4.5) {
+    simResultText.innerHTML = 'This would put you at <b>' + newPts.toFixed(1) + ' points</b>. That\'s the <span style="color:var(--red)">danger zone</span>.';
+  } else if (newPts >= 2.5) {
+    simResultText.innerHTML = 'This would put you at <b>' + newPts.toFixed(1) + ' points</b>. Getting close — be careful.';
+  } else {
+    simResultText.innerHTML = 'You\'d be at <b>' + newPts.toFixed(1) + ' points</b>. Still in the clear.';
+  }
+
+  // Reset after 3 seconds
+  setTimeout(() => {
+    gaugeValue.textContent = currentPoints.toFixed(1);
+    const origAngle = -90 + (currentPoints / 6) * 180;
+    const origRad = origAngle * Math.PI / 180;
+    document.getElementById('gaugeNeedle').setAttribute('x2', 120 + 55 * Math.sin(origRad));
+    document.getElementById('gaugeNeedle').setAttribute('y2', 130 - 55 * Math.cos(origRad));
+    gaugeStatus.textContent = "You're clear";
+    gaugeStatus.className = 'gauge-label green';
+    simResult.style.display = 'none';
+  }, 3000);
+}
+
+// ========== LEADERBOARD ==========
+const leaderboardData = [
+  { name: 'Diego R.', initials: 'DR', score: 94, you: false },
+  { name: 'Andre T.', initials: 'AT', score: 91, you: false },
+  { name: 'Kevin P.', initials: 'KP', score: 89, you: false },
+  { name: 'Marcus J.', initials: 'MJ', score: 87, you: true },
+  { name: 'Tony M.', initials: 'TM', score: 85, you: false },
+  { name: 'James L.', initials: 'JL', score: 83, you: false },
+  { name: 'Carlos S.', initials: 'CS', score: 81, you: false },
+  { name: 'Brian W.', initials: 'BW', score: 79, you: false },
+  { name: 'Luis G.', initials: 'LG', score: 77, you: false },
+  { name: 'Darnell H.', initials: 'DH', score: 74, you: false },
+];
+const medals = ['&#129351;', '&#129352;', '&#129353;'];
+
+function renderLeaderboard() {
+  const list = document.getElementById('leaderboardList');
+  list.innerHTML = leaderboardData.map((m, i) => {
+    const cls = m.you ? 'lb-row you' : (i < 3 ? 'lb-row top3' : 'lb-row');
+    const medal = i < 3 ? '<span class="lb-medal">' + medals[i] + '</span>' : '';
+    return '<div class="' + cls + '">' +
+      '<div class="lb-rank">' + medal + (i+1) + '</div>' +
+      '<div class="lb-avatar">' + m.initials + '</div>' +
+      '<div class="lb-name">' + m.name + (m.you ? ' <span style="font-size:11px;color:var(--orange)">(You)</span>' : '') + '</div>' +
+      '<div class="lb-score">' + m.score + '</div>' +
+    '</div>';
+  }).join('');
+}
+renderLeaderboard();
+
+function switchCategory(el) {
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  // In a real app, we'd re-sort data by category. For prototype, just visual feedback.
+}
+
+// ========== SCHEDULE VIEW ==========
+function switchScheduleView(view, el) {
+  document.querySelectorAll('.schedule-toggle-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('schedule-today').style.display = view === 'today' ? 'block' : 'none';
+  document.getElementById('schedule-week').style.display = view === 'week' ? 'block' : 'none';
+}
+
+// ========== TRAINING TABS ==========
+function switchTrainingTab(tab, el) {
+  document.querySelectorAll('.training-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('training-guide').style.display = tab === 'guide' ? 'block' : 'none';
+  document.getElementById('training-smart').style.display = tab === 'smart' ? 'block' : 'none';
+}
+
+// ========== STAGE TOGGLE ==========
+function toggleStage(id) {
+  const el = document.getElementById(id);
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+// ========== DAILY QUIZ ==========
+const quizBank = [
+  {
+    q: "Which side of the moving pad should face the furniture — the light side or the dark side?",
+    opts: ["Light side (it's cleaner)", "Dark side faces the furniture", "Doesn't matter — either side works", "Light side, except for glass items"],
+    correct: 0,
+    explanation: "The lighter color should always face the furniture, and the darker side faces out. Exception: glass items use the lighter (cleaner) side facing the glass.",
+    source: "Code of Geniuses — Basic Moving Guidelines"
+  },
+  {
+    q: "A customer can't pay when the move is done. What do you do?",
+    opts: ["Leave and let the office handle it", "Stay until you get approval from a manager", "Accept a promise to pay later", "Offer a discount to close it out"],
+    correct: 1,
+    explanation: "Do NOT leave the home until you get approval from a manager. Especially for storage deliveries — we may never be able to track them down.",
+    source: "Code of Geniuses — Basic Moving Guidelines"
+  },
+  {
+    q: "What's the maximum size TV that should go in a Gator Case?",
+    opts: ["45 inches", "50 inches", "60 inches", "Any size"],
+    correct: 2,
+    explanation: "TVs 60\" or smaller should ALWAYS be placed in a Gator Case. Anything larger should be padded and wrapped standard. Gator Cases are required on 99% of moves with a TV.",
+    source: "Code of Geniuses — Televisions"
+  },
+  {
+    q: "You arrive at a home with an unfinished attic full of boxes. The customer asks you to grab them. What do you do?",
+    opts: ["Go up if it looks safe", "We never go into any attic", "Only go if the attic has complete flooring", "Send the co-pilot up — lighter weight"],
+    correct: 2,
+    explanation: "We do NOT go into attic spaces unless they're completely finished (real flooring, no gaps, painted). It's a major injury and damage risk. The customer can hand items down to us.",
+    source: "Code of Geniuses — Attic Space in Home"
+  },
+  {
+    q: "Where should red rug runners be used?",
+    opts: ["Outside the home only", "Inside the home only", "Both inside and outside", "Only on hardwood floors"],
+    correct: 1,
+    explanation: "Red runners = inside only (keep them clean and professional). Blue runners = outside only (they get dirty). Always shake out runners before rolling them up.",
+    source: "Code of Geniuses — Red VS Blue Rug Runners"
+  },
+  {
+    q: "What's the FIRST thing you must do before disconnecting a washer?",
+    opts: ["Turn off the water", "Unplug the power cord", "Sign a liability waiver", "Take a photo for documentation"],
+    correct: 2,
+    explanation: "MOST IMPORTANT STEP: Sign a liability waiver BEFORE disconnecting. The customer must be present to oversee the process. If they can't be there, we don't hook it up.",
+    source: "Code of Geniuses — Washers and Dryers"
+  },
+  {
+    q: "Your move is scheduled for 1:30 PM. What time makes you officially late?",
+    opts: ["2:00 PM", "2:30 PM", "2:31 PM", "3:00 PM"],
+    correct: 2,
+    explanation: "There's a 2-hour arrival window. For a 1:30 move, the window is 12:30 to 2:30. At 2:31 you're late = automatic $50 off. Each additional 30 min past that = another $25 off.",
+    source: "Code of Geniuses — Late Arrivals to Customer"
+  },
+  {
+    q: "Can you dolly a mattress?",
+    opts: ["Yes, if it's a king size", "Yes, with a furniture dolly", "No — never dolly a mattress", "Only with the mattress carrier"],
+    correct: 2,
+    explanation: "Never attempt to dolly a box spring or mattress. Use a mattress carrier instead. Never fold a mattress or drag the carrier on steps/ground — it damages both the bag and mattress.",
+    source: "Code of Geniuses — Mattress Carrier Usage"
+  },
+  {
+    q: "How many days of paid parental leave does Einstein offer (if employed 1+ year)?",
+    opts: ["3 days", "5 days (10 if employed 1+ year)", "1 week", "None — it's unpaid"],
+    correct: 1,
+    explanation: "Einstein provides 5 days (10 days if employed 1 year+) of paid parental leave for all regular employees following a birth, adoption, or foster placement. Must be taken consecutively.",
+    source: "Code of Geniuses — Mover Parental Leave"
+  },
+  {
+    q: "You stop for gas after leaving the yard but before the first job. Is this allowed?",
+    opts: ["Yes, as long as it's quick", "Yes, but tell your lead", "No — alert dispatch via Slack BEFORE stopping", "No stops are allowed, ever"],
+    correct: 2,
+    explanation: "Morning stops after leaving the yard are NOT allowed unless authorized by management. Trucks have trackers. Alert your dispatch manager via Slack BEFORE stopping and get approval. Arrive ready — uniform on, water and snacks packed.",
+    source: "Code of Geniuses — Stops Before Starting the Job"
+  }
+];
+
+let currentQuizIndex = 0; // In real app, this would be date-based
+let quizAnswered = false;
+
+function answerQuiz(selected, el) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+
+  const quiz = quizBank[currentQuizIndex];
+  const options = document.querySelectorAll('#quizOptions .quiz-option');
+
+  options.forEach((opt, i) => {
+    if (i === quiz.correct) {
+      opt.classList.add('correct');
+    } else if (i === selected && selected !== quiz.correct) {
+      opt.classList.add('wrong');
+    } else {
+      opt.classList.add('dimmed');
+    }
+  });
+
+  const result = document.getElementById('quizResult');
+  if (selected === quiz.correct) {
+    result.className = 'quiz-result show correct-result';
+    result.innerHTML = '<b>Correct!</b> ' + quiz.explanation + '<div class="qr-source">' + quiz.source + '</div>';
+  } else {
+    result.className = 'quiz-result show wrong-result';
+    result.innerHTML = '<b>Not quite.</b> ' + quiz.explanation + '<div class="qr-source">' + quiz.source + '</div>';
+  }
+
+  // After 4 seconds, show completion
+  setTimeout(() => {
+    document.getElementById('quizBody').style.display = 'none';
+    const done = document.getElementById('quizDone');
+    done.classList.add('show');
+    if (selected === quiz.correct) {
+      done.querySelector('.qd-icon').textContent = '🔥';
+      done.querySelector('.qd-text').textContent = 'Correct! Streak: 8 days';
+    } else {
+      done.querySelector('.qd-icon').textContent = '📚';
+      done.querySelector('.qd-text').textContent = 'Nice try! Streak continues: 7 days';
+      done.querySelector('.qd-sub').textContent = 'Wrong answers don\'t break your streak — just keep showing up.';
+    }
+  }, 4000);
+}
+
+// ========== ASK EINSTEIN ==========
+function openAskEinstein() {
+  document.getElementById('askOverlay').classList.add('open');
+  document.getElementById('askSheet').classList.add('open');
+  document.getElementById('askInput').focus();
+}
+function closeAskEinstein() {
+  document.getElementById('askOverlay').classList.remove('open');
+  document.getElementById('askSheet').classList.remove('open');
+}
+
+const askAnswers = {
+  'grandfather clock': {
+    answer: 'Grandfather clocks are considered <b>overweight items</b> (300+ lbs). Einstein policy: we <b>WILL</b> move heavy items up or down stairs if it\'s not a safety issue, but items over 300 lbs (safes, pool tables, pianos) may be declined for stairs. A <b>liability waiver is always required</b> if using a dolly on internal stairwells.<br><br>For the clock itself: remove the pendulum and weights first, wrap them separately. Secure the clock door. Pad all sides heavily. Move upright — never lay it down. Two movers minimum.',
+    source: 'Code of Geniuses — Overweight Items'
+  },
+  'disconnect a washer': {
+    answer: '<b>MOST IMPORTANT:</b> Sign a liability waiver FIRST. Customer must be present to oversee disconnect.<br><br><b>Steps:</b><ol><li>Turn off water at spigots (be careful — if tight/rusted, leave the hose and let customer handle)</li><li>Disconnect water hoses. Hot = left wall, Cold = right wall (looking at back of washer)</li><li>Remove and store hoses inside the appliance</li><li>If front-loader: check for shipping bolts in the back</li><li>Wrap and pad, remove as many hoses as possible</li></ol><b>If a leak occurs:</b> Turn off water at storage closet (hot water heater) or the main shutoff (green box near sidewalk). Alert customer immediately.<br><br>The entire process must be done by the lead mover or under lead supervision.',
+    source: 'Code of Geniuses — Washers and Dryers'
+  },
+  'attic': {
+    answer: 'We do <b>NOT</b> go into attic spaces unless they are <b>completely finished out</b> (complete flooring, no gaps between boards, painted, carpet or real flooring).<br><br>It\'s a major injury risk — you could step through or fall through the ceiling. It\'s also a damage risk.<br><br><b>What to do:</b> Ask the customer to remove items from the attic before the move, or we can hand items up/down but shouldn\'t be climbing in. Movers can get on the ladder if safe (test weight at bottom), and putting boxes up is okay as long as you don\'t leave the ladder.',
+    source: 'Code of Geniuses — Attic Space in Home'
+  },
+  'attendance points': {
+    answer: 'You can check your current attendance points on the <b>Pulse</b> screen (call-in points tile) or get the full breakdown on <b>My Stats → Attendance</b>.<br><br>Your current balance: <b>1.5 points</b>. Next expiration: 0.5 pts drop off in 12 days.<br><br>Point values: Late arrival = +0.5, Call-out = +1.0, No-show = +1.5. Use the <b>Attendance Planner</b> in the Simulator to see what happens if you call in.',
+    source: 'App Data + Attendance Policy'
+  },
+  'dnr': {
+    answer: '<b>DNR = Doctor\'s Note Required days.</b> On these days, any call-in without a doctor\'s note counts as one more point than normal.<br><br><b>DNR days include:</b><ul><li>Day after all set holidays (July 5th, day after Thanksgiving, etc.)</li><li>Day after Super Bowl</li><li>Halloween + day after + Fri/Sat before</li><li>Day after Labor Day, Valentine\'s Day, Memorial Day</li><li>March 18th (day after St. Patrick\'s Day)</li><li>May 6th (day after Cinco de Mayo)</li></ul><b>Why?</b> These are the days with the most call-ins — usually hangover-related. It\'s not fair to the guys who show up.',
+    source: 'Code of Geniuses — DNR Days'
+  },
+  'request a day off': {
+    answer: '<b>To request a day off (RDO):</b><ol><li>Check that the days you want are available</li><li>Email <b>[yourbranch]@einsteinmoving.com</b> with subject: <i>"RDO: Your Name - Dates"</i></li><li>Submit by <b>Monday 11:59 AM</b> before the schedule is posted (every other Wednesday)</li><li>Check back in a couple days to confirm it was added</li></ol><b>Rules:</b><ul><li>First 2 requests per day are guaranteed, after that it depends on jobs booked</li><li>Give at least 7 days notice. 4+ days off = couple weeks notice</li><li>Once the schedule is posted, you can\'t request off — you\'d need to find your own replacement</li><li>More than 1 day off per 5 work days (over 3 months) = requests may be denied</li></ul>',
+    source: 'Code of Geniuses — Vacation Days / RDO'
+  },
+  'tv': {
+    answer: '<b>TV Procedures:</b><ul><li>ALWAYS remove from base, stand, or mount first</li><li>Remove cords — tape to back with painters tape, or put in Gator Case front pouch</li><li>TVs 60" or smaller → <b>Gator Case</b> (required on 99% of moves)</li><li>TVs larger than 60" → pad and wrap standard</li><li>Move to safe staging area where it can\'t be bumped</li><li>Curved screens: original box, customer transports, or wrap + extra safe placement</li></ul><b>At the unload:</b> ALWAYS plug in and turn on the TV at final location. Have customer confirm no damage before you leave. (Skip if going to storage.)<br><br><b>Gator Case:</b> Check for debris inside first. Store on hooks above pad stacks when not in use — never on ground or against a wall.',
+    source: 'Code of Geniuses — Televisions + Gator Case'
+  },
+  'floor': {
+    answer: '<b>Flooring protection rules:</b><br>On hardwood, stained concrete, or tile — lay pads or floor runners at:<ol><li>Entryway / high traffic area</li><li>Any corner or turn where furniture gets flipped</li><li>Under metal bed frames during assembly</li><li>Create a padded drop-off area for boxes</li></ol><b>Red runners</b> = inside the home only (keep clean). <b>Blue runners</b> = outside only (gets dirty).<br><br><b>NEVER</b> slide furniture across wood or stained concrete — carry it, dolly it, or use forearm straps. Check furniture feet for felt pads before placing on hard floors.',
+    source: 'Code of Geniuses — Flooring + Rug Runners'
+  }
+};
+
+function askQuestion(text) {
+  const messages = document.getElementById('askMessages');
+
+  // Remove suggestions from welcome message
+  const suggestions = messages.querySelector('.ask-suggestions');
+  if (suggestions) suggestions.remove();
+
+  // Add user message
+  messages.innerHTML += '<div class="ask-msg user">' + text + '</div>';
+
+  // Add typing indicator
+  messages.innerHTML += '<div class="ask-typing" id="typingIndicator"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  messages.scrollTop = messages.scrollHeight;
+
+  // Find answer
+  setTimeout(() => {
+    const typing = document.getElementById('typingIndicator');
+    if (typing) typing.remove();
+
+    let matched = null;
+    const lower = text.toLowerCase();
+    for (const [key, val] of Object.entries(askAnswers)) {
+      if (lower.includes(key)) { matched = val; break; }
+    }
+
+    if (matched) {
+      messages.innerHTML += '<div class="ask-msg bot">' + matched.answer + '<div class="source-tag">Source: ' + matched.source + '</div></div>';
+    } else {
+      messages.innerHTML += '<div class="ask-msg bot">Good question. In the full version, I\'d search the Code of Geniuses, Training Day stations, and company policies to find your answer. For now, try asking about washers, TVs, attics, attendance, DNR days, flooring, or requesting time off.</div>';
+    }
+    messages.scrollTop = messages.scrollHeight;
+  }, 1200);
+}
+
+function sendAskQuestion() {
+  const input = document.getElementById('askInput');
+  if (!input.value.trim()) return;
+  askQuestion(input.value.trim());
+  input.value = '';
+}
+
+// ========== MILESTONE CELEBRATION ==========
+function spawnConfetti() {
+  const container = document.getElementById('confettiContainer');
+  container.innerHTML = '';
+  const colors = ['#EF8B22', '#0979C3', '#69995d', '#FFC107', '#FF5252', '#8BC34A'];
+  for (let i = 0; i < 24; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.background = colors[i % colors.length];
+    piece.style.setProperty('--dx', (Math.random() * 240 - 120) + 'px');
+    piece.style.setProperty('--dy-up', (Math.random() * -80 - 40) + 'px');
+    piece.style.setProperty('--dy-down', (Math.random() * 160 + 60) + 'px');
+    piece.style.animationDelay = (Math.random() * 0.3) + 's';
+    piece.style.width = (Math.random() * 6 + 5) + 'px';
+    piece.style.height = (Math.random() * 6 + 5) + 'px';
+    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    container.appendChild(piece);
+  }
+}
+function showMilestone() {
+  document.getElementById('milestoneOverlay').classList.add('open');
+  spawnConfetti();
+}
+function closeMilestone() {
+  document.getElementById('milestoneOverlay').classList.remove('open');
+}
+
+// ========== SKILL DETAIL ==========
+function openSkillDetail(name, status, signoffs) {
+  document.getElementById('sdTitle').textContent = name;
+
+  const statusEl = document.getElementById('sdStatus');
+  if (status === 'in-progress') {
+    statusEl.innerHTML = '<span style="color:var(--orange)">In Progress</span> &bull; ' + signoffs + ' of 2 sign-offs';
+  } else {
+    statusEl.innerHTML = '<span style="color:#999">Not Started</span> &bull; 0 of 2 sign-offs';
+  }
+
+  // Update sign-off history based on count
+  const historyEl = document.querySelector('.sd-history');
+  if (signoffs >= 1) {
+    historyEl.innerHTML = '<div class="sd-history-item"><div class="sd-history-check">&#10003;</div><div><b>Sign-off #1:</b> Diego R. (Lead) &bull; 3/15/2026</div></div><div class="sd-history-item"><div style="width:16px;height:16px;border-radius:50%;border:2px solid #E0E0E0"></div><div style="color:#999">Sign-off #2: Not yet completed</div></div>';
+  } else {
+    historyEl.innerHTML = '<div class="sd-history-item"><div style="width:16px;height:16px;border-radius:50%;border:2px solid #E0E0E0"></div><div style="color:#999">Sign-off #1: Not yet completed</div></div><div class="sd-history-item"><div style="width:16px;height:16px;border-radius:50%;border:2px solid #E0E0E0"></div><div style="color:#999">Sign-off #2: Not yet completed</div></div>';
+  }
+
+  document.getElementById('skillOverlay').classList.add('open');
+  document.getElementById('skillSheet').classList.add('open');
+}
+
+function closeSkillDetail() {
+  document.getElementById('skillOverlay').classList.remove('open');
+  document.getElementById('skillSheet').classList.remove('open');
+}
+
+function demoSignoff(btn) {
+  const original = btn.innerHTML;
+  btn.innerHTML = '<div style="color:var(--green);font-weight:700">&#10003; Signed off by Diego R.</div>';
+  btn.style.borderColor = 'var(--green)';
+  btn.style.background = 'var(--green-light)';
+  setTimeout(() => {
+    btn.innerHTML = original;
+    btn.style.borderColor = 'var(--orange)';
+    btn.style.background = 'var(--white)';
+  }, 2500);
+}
+
+// ========== FEED FILTER ==========
+function switchFeedFilter(el) {
+  document.querySelectorAll('.feed-filter').forEach(f => f.classList.remove('active'));
+  el.classList.add('active');
+  // In real app, filter feed items. For prototype, just visual feedback.
+}
+</script>
+
+</body>
+</html>
