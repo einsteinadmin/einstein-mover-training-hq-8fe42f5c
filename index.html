@@ -535,6 +535,65 @@
     gap: 8px;
   }
 
+  /* ─── Changelog ─── */
+  .changelog {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 8px;
+  }
+
+  .cl-entry {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 20px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .cl-entry:last-child { border-bottom: none; }
+
+  .cl-date {
+    font-size: .78rem;
+    font-weight: 700;
+    color: var(--gray);
+    padding-top: 3px;
+    white-space: nowrap;
+  }
+
+  .cl-body h4 {
+    font-size: .95rem;
+    font-weight: 900;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+
+  .cl-body p {
+    font-size: .85rem;
+    color: var(--gray);
+    line-height: 1.5;
+    max-width: 720px;
+  }
+
+  .cl-tag {
+    display: inline-block;
+    font-size: .6rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 100px;
+    margin-right: 6px;
+    margin-bottom: 6px;
+    vertical-align: middle;
+  }
+
+  .tag-fix      { background: #FDECEA; color: #c0392b; }
+  .tag-feature  { background: #E3EFFA; color: var(--blue); }
+  .tag-content  { background: #E0F2EF; color: var(--teal); }
+  .tag-infra    { background: #EFECE6; color: var(--gray); }
+  .tag-tracking { background: #F3EEF9; color: #7B68B0; }
+
   /* ─── Dividers ─── */
   .divider {
     border: none;
@@ -567,7 +626,7 @@
   <div class="eyebrow">Mover Super App · Project HQ</div>
   <h1>Mover Training → Super App</h1>
   <p class="lede">Mike built a real mover-training app with Replit Agent. As of 6/12/2026 it's the chassis the whole Mover Super App grows into — not a stepping stone, the foundation. Mike drives, Matisen consults on data and identity.</p>
-  <p class="meta">Last updated 6/16/2026 &nbsp;·&nbsp; Owner: Mike (Albert/Cameron stewarding) &nbsp;·&nbsp; Status: pre-pilot review complete</p>
+  <p class="meta">Last updated 6/17/2026 &nbsp;·&nbsp; Owner: Mike (Albert/Cameron stewarding) &nbsp;·&nbsp; Status: pre-pilot review complete</p>
 
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;">
     <a href="https://github.com/einsteinadmin/Mike-Mover-Training" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;background:#1B3A5C;color:#fff;text-decoration:none;font-size:.82rem;font-weight:700;padding:9px 18px;border-radius:8px;letter-spacing:.3px;">
@@ -718,6 +777,29 @@
       <p>Implementation plan written for Mike's Replit agent — P0 must-fixes, P1 field-speed improvements, P2 pace-tracking spec. Ordered and ready to paste.</p>
       <div class="card-links">
         <a href="replit-agent-handover.md">Open handover doc →</a>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════
+       CHANGELOG
+  ══════════════════════════════════════════════ -->
+  <div class="section-head">
+    <div class="eyebrow">Living log</div>
+    <h2>Changelog</h2>
+    <p>Every meaningful change to the app, logged here as it happens. Most recent at the top.</p>
+  </div>
+
+  <div class="changelog">
+
+    <div class="cl-entry">
+      <div class="cl-date">6/17/2026</div>
+      <div class="cl-body">
+        <span class="cl-tag tag-tracking">Tracking</span>
+        <h4>HQ changelog launched</h4>
+        <p>Changelog section added to the Project HQ. Going forward, every app update Mike makes gets logged here so Cameron and the team have a single place to see what changed and when.</p>
       </div>
     </div>
 
@@ -972,7 +1054,7 @@
   ══════════════════════════════════════════════ -->
   <div class="foot">
     <span>One shared version. Mike collaborates here once deployed.</span>
-    <span>Last updated 6/16/2026 &nbsp;·&nbsp; Internal only — not for public distribution</span>
+    <span>Last updated 6/17/2026 &nbsp;·&nbsp; Internal only — not for public distribution</span>
   </div>
 
 </div>
