@@ -795,6 +795,41 @@
   <div class="changelog">
 
     <div class="cl-entry">
+      <div class="cl-date">6/19/2026</div>
+      <div class="cl-body">
+        <span class="cl-tag tag-feature">Feature</span>
+        <span class="cl-tag tag-fix">Integrity</span>
+        <span class="cl-tag tag-content">Content</span>
+        <h4>Onsite Eval hardening, prerequisites stage, and goal setting — major build session</h4>
+        <p>Ten updates across three areas of the app:</p>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Onsite Eval — enforcement &amp; integrity</p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">Gated eval flow</strong> — trainee cannot start the eval until all reading exercises are marked complete. Reading exercises then hide themselves to keep the view clean.</li>
+          <li><strong style="color:var(--navy);">Gated debrief</strong> — debrief cannot be started or marked complete until every eval item is marked pass or fail. Closes the gundecking path end-to-end.</li>
+          <li><strong style="color:var(--navy);">Two-actor debrief sign-off</strong> — debrief must be marked complete by both manager and mover before the Onsite Eval training module shows as complete, with a manager timestamp. Matches the onboarding field training model.</li>
+          <li><strong style="color:var(--navy);">Pass/Fail button fix</strong> — buttons can no longer be pressed multiple times and corrupt the score. Fail button now triggers a confirmation alert to prevent accidental failures.</li>
+          <li><strong style="color:var(--navy);">Furniture wrap scoring rework</strong> — furniture wrap eval updated from binary pass/fail to full 1–5 miss scale plus critical fail option.</li>
+        </ul>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Onsite Eval — content &amp; UX</p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">Images updated</strong> — eval training images now align with the Onsite Eval standard and expectations training on Rippling.</li>
+          <li><strong style="color:var(--navy);">Post-eval debrief added</strong> — structured debrief checklist added for manager + trainee to complete together back in the vehicle. Drives a conversation around what the trainee vs FM identified as misses, sets field expectations, and fills gaps the training didn't cover.</li>
+          <li><strong style="color:var(--navy);">"What we're looking for" reformatted</strong> — all eval point descriptions converted from paragraph to bullet form for easier reading in the field.</li>
+          <li><strong style="color:var(--navy);">Instructions updated</strong> — onsite eval training exercise instructions rewritten for clarity.</li>
+        </ul>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Prerequisites stage &amp; goal setting</p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">Prerequisites stage built</strong> — new stage added before mover training begins covering onboarding-type content: core values, Einstein coaching protocol, KPIs, QGs, and similar foundational material. Also includes an "instructions for use and accountability" read-before-starting task that must be acknowledged before sprints unlock.</li>
+          <li><strong style="color:var(--navy);">KPI &amp; goal-setting exercise</strong> — trainees fill in their KPIs, goals, and Red/Green/Super Green lines plus quarterly priorities with a manager before the stage can be marked complete. Goals then go live and display at the top of their training portal.</li>
+          <li><strong style="color:var(--navy);">Quarterly goal reset</strong> — managers can force a re-run of the goal-setting exercise for trainees still in training when a new quarter rolls over.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cl-entry">
       <div class="cl-date">6/18/2026</div>
       <div class="cl-body">
         <span class="cl-tag tag-feature">Feature</span>
@@ -870,7 +905,7 @@
 
           <div class="fix-item">
             <span class="fix-badge badge-high">High</span>
-            <strong>Enforce manager-only sign-off on every gate.</strong> Today, "MGMT sign-off" sprint items can be self-marked by trainees — only Stage 1 (onboarding checklist) is server-enforced. The two-actor integrity story needs to cover every stage, not just the first.
+            <strong>Enforce manager-only sign-off on every gate.</strong> Today, "MGMT sign-off" sprint items can be self-marked by trainees — only Stage 1 (onboarding checklist) is server-enforced. The two-actor integrity story needs to cover every stage, not just the first. <em style="color:var(--teal);">Partial progress 6/19: Onsite Eval debrief now requires both manager + mover sign-off with manager timestamp before the module marks complete.</em>
           </div>
 
           <div class="fix-item">
