@@ -626,7 +626,7 @@
   <div class="eyebrow">Mover Super App · Project HQ</div>
   <h1>Mover Training → Super App</h1>
   <p class="lede">Mike built a real mover-training app with Replit Agent. As of 6/12/2026 it's the chassis the whole Mover Super App grows into — not a stepping stone, the foundation. Mike drives, Matisen consults on data and identity.</p>
-  <p class="meta">Last updated 6/19/2026 &nbsp;·&nbsp; Owner: Mike (Albert/Cameron stewarding) &nbsp;·&nbsp; Status: pre-pilot review complete</p>
+  <p class="meta">Last updated 6/22/2026 &nbsp;·&nbsp; Owner: Mike (Albert/Cameron stewarding) &nbsp;·&nbsp; Status: pre-pilot review complete</p>
 
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;">
     <a href="https://github.com/einsteinadmin/Mike-Mover-Training" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;background:#1B3A5C;color:#fff;text-decoration:none;font-size:.82rem;font-weight:700;padding:9px 18px;border-radius:8px;letter-spacing:.3px;">
@@ -795,6 +795,43 @@
   <div class="changelog">
 
     <div class="cl-entry">
+      <div class="cl-date">6/22/2026</div>
+      <div class="cl-body">
+        <span class="cl-tag tag-feature">Feature</span>
+        <span class="cl-tag tag-fix">Integrity</span>
+        <span class="cl-tag tag-infra">Infra</span>
+        <h4>Sprint review workflow, video prerequisites, object storage, and data guardrails — major build session</h4>
+        <p>Nine updates — two categorized as big lifts, two critical infrastructure investments:</p>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Sprint structure &amp; gating</p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">Instructions gate on all sprints</strong> — all sprints locked until the instructions and expectations doc is marked read.</li>
+          <li><strong style="color:var(--navy);">Sprint heading cleanup</strong> — heading structure cleaned up across both Mover and Lead training modules.</li>
+          <li><strong style="color:var(--navy);">Multi-completion sprint items</strong> — sprint items in Mover and Lead modules now require 2+ "Completed" confirmations to mirror the existing handbook's proficiency model. Second completions are date-locked: only one completion per item per day, preventing a trainee from marking the same item done twice in the same session.</li>
+          <li><strong style="color:var(--navy);">Sprint 1 reworked</strong> — sprint 1 restructured to better align with intended coursework.</li>
+        </ul>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Between-sprints review workflow <span style="color:var(--orange);font-size:.68rem;"> BIG LIFT</span></p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">Mover Training stage restructured</strong> — each sprint now contains only hands-on skill items. Cross-cutting "sprint completion" items (praise, culture exercises, eNPS surveys) moved out into a new between-sprints review step.</li>
+          <li><strong style="color:var(--navy);">Manager sign-off gates next sprint</strong> — when a trainee finishes the review step, the sprint is flagged as "Ready for Review" on the manager dashboard. Manager sign-off on the review step is what unlocks the next sprint. The hand-off to management is now an explicit, visible checkpoint instead of a self-marked line buried inside the sprint.</li>
+        </ul>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Video prerequisites <span style="color:var(--orange);font-size:.68rem;"> BIG LIFT</span></p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">Video hard gate on select sprints</strong> — specific Mover Training sprints now require the mover to watch a training video to completion before any item in that sprint can be marked complete. Same model as the existing "Start Here" reading gate. Unlocks the sprint's hands-on work only after the video is finished.</li>
+        </ul>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Infrastructure &amp; data integrity</p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">Object storage added</strong> — app now uses object storage for large-format content (docs, videos) to avoid bloating the static app and risking slowdowns or crashes. One-time investment: all videos downloaded and re-uploaded into the new storage layer.</li>
+          <li><strong style="color:var(--navy);">Backend guardrails + server tests</strong> — multiple backend guardrails and server-side tests added to prevent process regression. Patches several edge cases surfaced during development review.</li>
+          <li><strong style="color:var(--navy);">Trainee progress permanently protected</strong> — app now has hard guardrails on all destructive commands and a safe-publish process. Future deployments and schema changes cannot wipe trainee progress, sign-offs, or manager dashboards.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cl-entry">
       <div class="cl-date">6/19/2026</div>
       <div class="cl-body">
         <span class="cl-tag tag-feature">Feature</span>
@@ -900,12 +937,12 @@
 
           <div class="fix-item">
             <span class="fix-badge badge-critical">Critical</span>
-            <strong>Guard the seed script from destroying live progress.</strong> Re-running <code>seed.ts</code> currently deletes ALL trainee progress with no warning. Add a <code>--wipe</code> flag for destructive mode; default = upsert curriculum, never touch progress rows. Most important fix in the package.
+            <strong>Guard the seed script from destroying live progress.</strong> Re-running <code>seed.ts</code> currently deletes ALL trainee progress with no warning. Add a <code>--wipe</code> flag for destructive mode; default = upsert curriculum, never touch progress rows. Most important fix in the package. <em style="color:var(--teal);">✓ Resolved 6/22: Hard guardrails added to all destructive commands + safe-publish process in place. Future deployments cannot wipe trainee progress, sign-offs, or manager dashboards.</em>
           </div>
 
           <div class="fix-item">
             <span class="fix-badge badge-high">High</span>
-            <strong>Enforce manager-only sign-off on every gate.</strong> Today, "MGMT sign-off" sprint items can be self-marked by trainees — only Stage 1 (onboarding checklist) is server-enforced. The two-actor integrity story needs to cover every stage, not just the first. <em style="color:var(--teal);">Partial progress 6/19: Onsite Eval debrief now requires both manager + mover sign-off with manager timestamp before the module marks complete.</em>
+            <strong>Enforce manager-only sign-off on every gate.</strong> Today, "MGMT sign-off" sprint items can be self-marked by trainees — only Stage 1 (onboarding checklist) is server-enforced. The two-actor integrity story needs to cover every stage, not just the first. <em style="color:var(--teal);">Major progress 6/22: Between-sprints review step now requires explicit manager sign-off to unlock the next sprint across the full Mover Training stage. Onsite Eval debrief requires manager + mover sign-off (6/19). Remaining: confirm all other stages covered.</em>
           </div>
 
           <div class="fix-item">
@@ -1107,7 +1144,7 @@
   ══════════════════════════════════════════════ -->
   <div class="foot">
     <span>One shared version. Mike collaborates here once deployed.</span>
-    <span>Last updated 6/19/2026 &nbsp;·&nbsp; Internal only — not for public distribution</span>
+    <span>Last updated 6/22/2026 &nbsp;·&nbsp; Internal only — not for public distribution</span>
   </div>
 
 </div>
