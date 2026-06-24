@@ -594,6 +594,40 @@
   .tag-infra    { background: #EFECE6; color: var(--gray); }
   .tag-tracking { background: #F3EEF9; color: #7B68B0; }
 
+  /* ─── Near-term to-do list ─── */
+  .todo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .todo-item {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--gray);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 12px;
+    align-items: start;
+    font-size: .87rem;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+
+  .todo-item strong { color: var(--navy); }
+
+  .todo-check {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--line);
+    border-radius: 4px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
   /* ─── Dividers ─── */
   .divider {
     border: none;
@@ -626,7 +660,7 @@
   <div class="eyebrow">Mover Super App · Project HQ</div>
   <h1>Mover Training → Super App</h1>
   <p class="lede">Mike built a real mover-training app with Replit Agent. As of 6/12/2026 it's the chassis the whole Mover Super App grows into — not a stepping stone, the foundation. Mike drives, Matisen consults on data and identity.</p>
-  <p class="meta">Last updated 6/22/2026 &nbsp;·&nbsp; Owner: Mike (Albert/Cameron stewarding) &nbsp;·&nbsp; Status: pre-pilot review complete</p>
+  <p class="meta">Last updated 6/24/2026 &nbsp;·&nbsp; Owner: Mike (Albert/Cameron stewarding) &nbsp;·&nbsp; Status: pre-pilot review complete</p>
 
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;">
     <a href="https://github.com/einsteinadmin/Mike-Mover-Training" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;background:#1B3A5C;color:#fff;text-decoration:none;font-size:.82rem;font-weight:700;padding:9px 18px;border-radius:8px;letter-spacing:.3px;">
@@ -793,6 +827,38 @@
   </div>
 
   <div class="changelog">
+
+    <div class="cl-entry">
+      <div class="cl-date">6/24/2026</div>
+      <div class="cl-body">
+        <span class="cl-tag tag-infra">Infra</span>
+        <span class="cl-tag tag-feature">Feature</span>
+        <span class="cl-tag tag-content">Content</span>
+        <h4>Test infrastructure hardened, praise workflow built, photo sign-offs, video gates expanded — major build session</h4>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Data protection &amp; test infrastructure</p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">Seed/push-force regression tests</strong> — data-protection guardrails now have regression tests for the "refuse to wipe" latches on seed and push-force commands.</li>
+          <li><strong style="color:var(--navy);">Curriculum migration regression test</strong> — regression test added that runs a migration against a seeded throwaway database and asserts trainee progress survives and is re-attached to the correct items after restructure. Closes the gap where a future migrate-*.ts script could silently drop or re-key progress rows on a populated/prod DB.</li>
+          <li><strong style="color:var(--navy);">Lead Training migration coverage</strong> — equivalent safety net added for the Mover Training (lead-in) curriculum migration. When Lead Training applies the same sprint + review restructure, the new migration has automated coverage from the start.</li>
+          <li><strong style="color:var(--navy);">Ephemeral DB test harness (describeDb + globalSetup)</strong> — DB-backed safety suites now run reliably via an ephemeral Postgres globalSetup (Task #27). Tests no longer silently skip in environments without a provisioned test database, eliminating the false-green problem.</li>
+          <li><strong style="color:var(--navy);">Additive-schema assertion</strong> — replit.md's promise that schema changes are always additive (add columns/tables, never drop) is now automatically enforced. A future edit that drops or renames a column will turn the build red.</li>
+          <li><strong style="color:var(--navy);">Deploy gate wired</strong> — DB-backed test suite now runs as part of the production build (build:production in api-server/package.json, wired via artifact.toml). A regression that would wipe trainee progress or break a curriculum migration is caught before it ships. <em style="color:#9a6a1e;">Note: deploy build environment must have initdb/pg_ctl/psql on PATH for DB suites to run; a missing-tooling situation is designed to fail loudly rather than silently skip — environment compatibility should be confirmed before next publish.</em></li>
+        </ul>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Training content &amp; curriculum</p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">Booklet line items reworked</strong> — initial booklet upload had broken all text lines into separate completion items. Went through the full booklet and reworked all line items to match the original structure. Steps that belong together are now grouped as checklists within items rather than separate sign-offs.</li>
+          <li><strong style="color:var(--navy);">Video gates expanded</strong> — "Watch:" video gate steps added to additional Mover Training and Lead Training sprints, matching the Sprint 2 (Home Prep) pattern. Each video step sits at the top of its sprint and must be watched to completion before hands-on tasks unlock. Placeholder "coming soon" clip used for all new gates; real footage swaps in via each item's videoUrl.</li>
+        </ul>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Praise workflow &amp; photo sign-offs</p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">Structured praise check-ins</strong> — praise check-ins now require the trainee to write actual praise using a structured fill-in-the-blank format. Both narrative fields must contain a real sentence before submission is allowed. Submission routes to the manager dashboard for explicit approve/deny before the step counts as done.</li>
+          <li><strong style="color:var(--navy);">Photo attachment + manager approval on sign-offs</strong> — select hands-on tasks (e.g., furniture wrapping) now require the trainee to attach a photo at each sign-off. Managers review photos on the dashboard and can deny a single sign-off with written feedback — removing only that attempt, not other completions for the same item — and the trainee sees the feedback and can redo it.</li>
+        </ul>
+      </div>
+    </div>
 
     <div class="cl-entry">
       <div class="cl-date">6/22/2026</div>
@@ -1091,6 +1157,60 @@
 
 
   <!-- ══════════════════════════════════════════════
+       NEAR-TERM TO-DO
+  ══════════════════════════════════════════════ -->
+  <div class="section-head">
+    <div class="eyebrow">What's next</div>
+    <h2>Near-term to-do list</h2>
+    <p>Confirmed work items queued for upcoming build sessions. Not the full roadmap — just the next layer of improvements.</p>
+  </div>
+
+  <div class="todo-list">
+
+    <div class="todo-item">
+      <div class="todo-check"></div>
+      <div><strong>Onsite eval tracker — pull direct to user + lock out other movers</strong><br>Update the onsite eval tracker to pull directly to the specific user's evals and lock out access to other movers' data, matching the model already used in EMC Games.</div>
+    </div>
+
+    <div class="todo-item">
+      <div class="todo-check"></div>
+      <div><strong>Build out Anne's checkpoints</strong><br>Implement Anne's Day-7, Day-12, Day-30, Day-45, and Day-60 milestone gates as hard checkpoints in the training flow. These become the build spec for the Pace Tracking module (Phase 5 #1).</div>
+    </div>
+
+    <div class="todo-item">
+      <div class="todo-check"></div>
+      <div><strong>Code of Geniuses changelog + mover alerts</strong><br>Add a changelog to the Code of Geniuses wiki so movers are notified when curriculum content is updated.</div>
+    </div>
+
+    <div class="todo-item">
+      <div class="todo-check"></div>
+      <div><strong>Due dates on sprints (manager-assigned)</strong><br>Managers can assign a due date to each sprint for a specific trainee. Sprint shows countdown; overdue sprints flag on the manager dashboard.</div>
+    </div>
+
+    <div class="todo-item">
+      <div class="todo-check"></div>
+      <div><strong>Photo approve/deny — add written feedback field</strong><br>Extend the photo sign-off approval flow so managers can include written feedback when denying a submission. Trainee sees the feedback before resubmitting.</div>
+    </div>
+
+    <div class="todo-item">
+      <div class="todo-check"></div>
+      <div><strong>Running log of reissued trainings</strong><br>Keep a persistent log when a manager reissues a training to a mover — who reissued it, what was reissued, and when. Visible on manager dashboard for accountability.</div>
+    </div>
+
+    <div class="todo-item">
+      <div class="todo-check"></div>
+      <div><strong>Hardcoded manager 1:1 checkpoints</strong><br>Build in scheduled 1:1 checkpoints with managers that lock training progress until the meeting is marked complete by both parties.</div>
+    </div>
+
+    <div class="todo-item">
+      <div class="todo-check"></div>
+      <div><strong>4-stage Code of Geniuses quizzes</strong><br>Add knowledge-check quizzes at 4 points throughout the training process tied to Code of Geniuses curriculum content.</div>
+    </div>
+
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════
        SIGN-OFF PANEL
   ══════════════════════════════════════════════ -->
   <div class="section-head">
@@ -1144,7 +1264,7 @@
   ══════════════════════════════════════════════ -->
   <div class="foot">
     <span>One shared version. Mike collaborates here once deployed.</span>
-    <span>Last updated 6/22/2026 &nbsp;·&nbsp; Internal only — not for public distribution</span>
+    <span>Last updated 6/24/2026 &nbsp;·&nbsp; Internal only — not for public distribution</span>
   </div>
 
 </div>
