@@ -660,7 +660,7 @@
   <div class="eyebrow">Mover Super App · Project HQ</div>
   <h1>Mover Training → Super App</h1>
   <p class="lede">Mike built a real mover-training app with Replit Agent. As of 6/12/2026 it's the chassis the whole Mover Super App grows into — not a stepping stone, the foundation. Mike drives, Matisen consults on data and identity.</p>
-  <p class="meta">Last updated 6/24/2026 &nbsp;·&nbsp; Owner: Mike (Albert/Cameron stewarding) &nbsp;·&nbsp; Status: pre-pilot review complete</p>
+  <p class="meta">Last updated 6/25/2026 &nbsp;·&nbsp; Owner: Mike (Albert/Cameron stewarding) &nbsp;·&nbsp; Status: <strong style="color:var(--teal);">Published — field-testing phase</strong></p>
 
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;">
     <a href="https://github.com/einsteinadmin/Mike-Mover-Training" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;background:#1B3A5C;color:#fff;text-decoration:none;font-size:.82rem;font-weight:700;padding:9px 18px;border-radius:8px;letter-spacing:.3px;">
@@ -827,6 +827,51 @@
   </div>
 
   <div class="changelog">
+
+    <div class="cl-entry">
+      <div class="cl-date">6/25/2026</div>
+      <div class="cl-body">
+        <span class="cl-tag tag-feature">Feature</span>
+        <span class="cl-tag tag-infra">Infra</span>
+        <span class="cl-tag tag-content">Content</span>
+        <h4>Real training videos wired, photo sign-offs expanded, data-migration ledger, app published — major build session</h4>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Training videos</p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">4 real videos attached to Mover Training gates</strong> — Bed Disassembly, Table Disassembly, Packing Glassware, and Packing Wardrobes placeholders replaced with real footage. Table Disassembly reuses the "Large Tables" clip.</li>
+          <li><strong style="color:var(--navy);">Large Tables + Dressers/Entertainment Centers wired to Sprint 4</strong> — real footage attached to Sprint 4 "Watch: Large Tables" and Sprint 4 "Large Rectangle Furniture" gates.</li>
+          <li><strong style="color:var(--navy);">Couches gate swapped to real footage</strong> — Sprint 3 couch gate placeholder replaced.</li>
+          <li><strong style="color:var(--navy);">Switched to direct content links</strong> — all training videos now use direct content links instead of indirect references.</li>
+          <li><strong style="color:var(--navy);">Sprint 3 hog-tie video reordered</strong> — hog-tie video repositioned directly above its matching demonstration task; ordering made durable.</li>
+          <li><strong style="color:var(--navy);">Sprint 3 video gate bug fixed</strong> — gate wasn't unlocking the couch demo. Fixed by making the gate positional.</li>
+        </ul>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Photo-verified sign-offs</p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">13 more demonstration tasks require photo at sign-off</strong> — photo requirement added across Mover and Lead Training.</li>
+          <li><strong style="color:var(--navy);">Home Prep module added to photo requirements.</strong></li>
+          <li><strong style="color:var(--navy);">Manager denial message updated</strong> — clearer message shown to managers when denying a photo sign-off task.</li>
+          <li><strong style="color:var(--navy);">Startup check added</strong> — operators are warned at startup if photo storage isn't configured.</li>
+          <li><strong style="color:var(--navy);">Test coverage added</strong> — photo upload/display flow and image compression now covered by automated tests.</li>
+        </ul>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Curriculum &amp; content</p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">Rectangle-furniture demo converted to verification checklist.</strong></li>
+          <li><strong style="color:var(--navy);">Prerequisites stage bug fixed</strong> — missing Prerequisites stage now added correctly when absent.</li>
+          <li><strong style="color:var(--navy);">Checklist wording updated</strong> — clarity improvements plus broader content migrations applied.</li>
+        </ul>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Publishing &amp; data-safety infrastructure</p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">Data-migration ledger added</strong> — curriculum updates now reliably reach production; forgotten migration runs are flagged automatically.</li>
+          <li><strong style="color:var(--navy);">prod-content-reconcile migration added</strong> — syncs production with the curriculum source of truth.</li>
+          <li><strong style="color:var(--navy);">Pending migrations + deploy checklist documented.</strong></li>
+          <li><strong style="color:var(--navy);">Publish failure resolved</strong> — fixed by isolating the build-time test gate from the production database. Resolves the environment-tooling concern flagged 6/24.</li>
+          <li><strong style="color:var(--navy);color:var(--teal);">✓ App published successfully</strong> — post-merge setup completed. App is live in field-testing phase.</li>
+        </ul>
+      </div>
+    </div>
 
     <div class="cl-entry">
       <div class="cl-date">6/24/2026</div>
@@ -1264,7 +1309,7 @@
   ══════════════════════════════════════════════ -->
   <div class="foot">
     <span>One shared version. Mike collaborates here once deployed.</span>
-    <span>Last updated 6/24/2026 &nbsp;·&nbsp; Internal only — not for public distribution</span>
+    <span>Last updated 6/25/2026 &nbsp;·&nbsp; Internal only — not for public distribution</span>
   </div>
 
 </div>
