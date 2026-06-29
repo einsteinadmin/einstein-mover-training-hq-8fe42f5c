@@ -660,7 +660,7 @@
   <div class="eyebrow">Mover Super App · Project HQ</div>
   <h1>Mover Training → Super App</h1>
   <p class="lede">Mike built a real mover-training app with Replit Agent. As of 6/12/2026 it's the chassis the whole Mover Super App grows into — not a stepping stone, the foundation. Mike drives, Matisen consults on data and identity.</p>
-  <p class="meta">Last updated 6/25/2026 &nbsp;·&nbsp; Owner: Mike (Albert/Cameron stewarding) &nbsp;·&nbsp; Status: <strong style="color:var(--teal);">Published — field-testing phase</strong></p>
+  <p class="meta">Last updated 6/29/2026 &nbsp;·&nbsp; Owner: Mike (Albert/Cameron stewarding) &nbsp;·&nbsp; Status: <strong style="color:var(--teal);">Published — field-testing phase</strong></p>
 
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;">
     <a href="https://github.com/einsteinadmin/Mike-Mover-Training" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;background:#1B3A5C;color:#fff;text-decoration:none;font-size:.82rem;font-weight:700;padding:9px 18px;border-radius:8px;letter-spacing:.3px;">
@@ -827,6 +827,64 @@
   </div>
 
   <div class="changelog">
+
+    <div class="cl-entry">
+      <div class="cl-date">6/27–6/29/2026</div>
+      <div class="cl-body">
+        <span class="cl-tag tag-feature">Feature</span>
+        <span class="cl-tag tag-fix">Integrity</span>
+        <span class="cl-tag tag-fix">Security</span>
+        <h4>Manager dashboard rework, performance review workflow, CORS fix, gating &amp; curriculum cleanup</h4>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Mover Training performance review (lead-in)</p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">Lead-in Performance Review converted</strong> — now a manager-driven culture review exercise.</li>
+          <li><strong style="color:var(--navy);">Manager-driven Mover Fit assessment added.</strong></li>
+          <li><strong style="color:var(--navy);">Feedback Acknowledgment step added</strong> — mover confirms they received the review before the stage advances.</li>
+          <li><strong style="color:var(--navy);">Test coverage added</strong> — manager-only rules, sequential lock gate, and end-to-end both-role smoke test.</li>
+        </ul>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Mover IDs</p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">Mover ID required on user creation.</strong></li>
+          <li><strong style="color:var(--navy);">Unique ID enforcement</strong> — duplicate Mover IDs blocked across active users; reactivated movers can't clash with a reused ID.</li>
+        </ul>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Manager dashboard &amp; drill-in</p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">Dashboard reworked</strong> — shows trainees in training and "Tasks Ready for Review"; recent-activity section removed.</li>
+          <li><strong style="color:var(--navy);">"Needs attention" signal wired end-to-end</strong> — stage cards turn red when a manager action is required.</li>
+          <li><strong style="color:var(--navy);">Stage cards now drillable</strong> — onboarding checklist, Onsite Eval debrief, and sprint stages open a focused drill-in page instead of living on the dashboard.</li>
+          <li><strong style="color:var(--navy);">Sprint view grouped into collapsible sprint spans</strong> (collapsed by default); sprint manager exercises and praise approve/deny rendered inline with their task.</li>
+          <li><strong style="color:var(--navy);">Photo sign-off approve action added</strong> — reviewed photos collapse after approval.</li>
+          <li><strong style="color:var(--navy);">Layout polish</strong> — compact square-grid progression cards, reduced whitespace on trainee detail page.</li>
+          <li><strong style="color:var(--navy);">Navigation cleanup</strong> — Manager Dashboard link added for staff; training/performance-log tabs removed for managers.</li>
+          <li><strong style="color:var(--navy);">Dashboard sections collapsible.</strong> Training-program feature boxes removed from main screen.</li>
+          <li><strong style="color:var(--navy);">Praise Inbox renamed and filtered</strong> — shows only submitted/pending reviews; approved and denied entries now hidden.</li>
+          <li><strong style="color:var(--navy);">Packing Log and Performance Review sections made collapsible.</strong></li>
+        </ul>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Gating &amp; curriculum</p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">Performance Review + Mover Fit gated</strong> — unlocks only after all sprints and the Packing Log are complete.</li>
+          <li><strong style="color:var(--navy);">Sprint review manager gate added</strong> — sprint review can't be signed off until every sprint task is complete.</li>
+          <li><strong style="color:var(--navy);">TVs &amp; Monitors demo converted to checklist; Sprint 8 "Start, Stop, Keep" converted to fill-in exercise.</strong></li>
+          <li><strong style="color:var(--navy);">Multiple sign-offs required for pack jobs.</strong></li>
+          <li><strong style="color:var(--navy);">Lead Training cleanup</strong> — removed duplicate "5 pack jobs completed" prerequisite; renamed "Driver Test" section to "Driver Training"; updated item wording to "Driver training completed and certificate uploaded into Rippling Documents" with a progress-safe migration.</li>
+          <li><strong style="color:var(--navy);">Removed "Confidential eNPS survey #2" and a specific culture-exercise item.</strong></li>
+          <li><strong style="color:var(--navy);">Dev unlock override removed</strong> — sprint locking now matches production behavior.</li>
+          <li><strong style="color:var(--navy);">Mover Training intro item renamed to "Training Instructions".</strong></li>
+          <li><strong style="color:var(--navy);">Default app image updated; duplicate exercise/section headers cleaned up.</strong></li>
+        </ul>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Security &amp; other</p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);color:var(--teal);">✓ CORS locked to known origins</strong> — was reflecting any caller's origin with credentials enabled, a real cross-site attack vector. Now locked. Closes the last open Critical item from the Phase 2 hardening list.</li>
+          <li><strong style="color:var(--navy);">Camera opens directly for sign-off photos</strong> — no extra tap required.</li>
+          <li><strong style="color:var(--navy);">Test coverage added</strong> — Add User flow, manager dashboard badges, and "needs attention" signal.</li>
+        </ul>
+      </div>
+    </div>
 
     <div class="cl-entry">
       <div class="cl-date">6/25/2026</div>
@@ -1043,7 +1101,7 @@
 
           <div class="fix-item">
             <span class="fix-badge badge-critical">Critical</span>
-            <strong>Lock CORS to known origins.</strong> Current config reflects any caller — combined with credentialed requests, this lets any attacker site call the API as a logged-in manager. One-line allowlist fix in <code>api-server/src/app.ts</code>.
+            <strong>Lock CORS to known origins.</strong> Current config reflects any caller — combined with credentialed requests, this lets any attacker site call the API as a logged-in manager. One-line allowlist fix in <code>api-server/src/app.ts</code>. <em style="color:var(--teal);">✓ Resolved 6/29: CORS locked to known origins.</em>
           </div>
 
           <div class="fix-item">
@@ -1309,7 +1367,7 @@
   ══════════════════════════════════════════════ -->
   <div class="foot">
     <span>One shared version. Mike collaborates here once deployed.</span>
-    <span>Last updated 6/25/2026 &nbsp;·&nbsp; Internal only — not for public distribution</span>
+    <span>Last updated 6/29/2026 &nbsp;·&nbsp; Internal only — not for public distribution</span>
   </div>
 
 </div>
