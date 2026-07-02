@@ -660,7 +660,7 @@
   <div class="eyebrow">Mover Super App · Project HQ</div>
   <h1>Mover Training → Super App</h1>
   <p class="lede">Mike built a real mover-training app with Replit Agent. As of 6/12/2026 it's the chassis the whole Mover Super App grows into — not a stepping stone, the foundation. Mike drives, Matisen consults on data and identity.</p>
-  <p class="meta">Last updated 6/29/2026 &nbsp;·&nbsp; Owner: Mike (Albert/Cameron stewarding) &nbsp;·&nbsp; Status: <strong style="color:var(--teal);">Published — field-testing phase</strong></p>
+  <p class="meta">Last updated 7/1/2026 &nbsp;·&nbsp; Owner: Mike (Albert/Cameron stewarding) &nbsp;·&nbsp; Status: <strong style="color:var(--teal);">Live — mobile app + web app</strong></p>
 
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;">
     <a href="https://github.com/einsteinadmin/Mike-Mover-Training" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;background:#1B3A5C;color:#fff;text-decoration:none;font-size:.82rem;font-weight:700;padding:9px 18px;border-radius:8px;letter-spacing:.3px;">
@@ -827,6 +827,47 @@
   </div>
 
   <div class="changelog">
+
+    <div class="cl-entry">
+      <div class="cl-date">7/1/2026</div>
+      <div class="cl-body">
+        <span class="cl-tag tag-feature">Feature</span>
+        <span class="cl-tag tag-infra">Infra</span>
+        <span class="cl-tag tag-content">Content</span>
+        <h4>Mobile app launched, accountability features, YouTube video migration, onsite eval refresh</h4>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Mobile app <span style="color:var(--orange);font-size:.68rem;"> MILESTONE</span></p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">New Einstein Training mobile app</strong> — sign-in, onboarding/pending-approval flow, dashboard, and full stage screens. Movers can watch training videos, complete quarterly goals and sprint reflections, and submit photo sign-offs directly from their phone camera.</li>
+          <li><strong style="color:var(--navy);">Trainee notifications</strong> — movers notified when work is approved, denied, or sent back.</li>
+          <li><strong style="color:var(--navy);">Manager overdue check-in warnings</strong> — managers see oldest waiting check-ins first.</li>
+          <li><strong style="color:var(--navy);">Sprint locking change</strong> — all items in the active sprint open together; manager sign-off still gates the next sprint.</li>
+          <li><strong style="color:var(--navy);">User delete in Settings; login fix</strong> — securely re-links existing accounts. "Moving Terms" onboarding section made manager-only.</li>
+          <li><strong style="color:var(--navy);">Mobile tap-to-enlarge for reading documents; notification tray fixes.</strong></li>
+          <li><strong style="color:var(--navy);">Velocity now measures Mover Training onward only.</strong></li>
+        </ul>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Accountability features</p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">7-day inactivity lock</strong> — training locks after 7 days of inactivity; a manager unlocks it by logging a coaching check-in.</li>
+          <li><strong style="color:var(--navy);">Recurring 1:1 check-ins at weeks 1, 2, 4, and 8</strong> — with a manager review queue for submitted check-ins and in-app notifications when a check-in is due or submitted.</li>
+          <li><strong style="color:var(--navy);">Velocity and training-lifetime analytics</strong> — added to the manager dashboard.</li>
+        </ul>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Training videos → YouTube</p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">Fixed Android/mobile playback</strong> — videos not playing on mobile devices resolved.</li>
+          <li><strong style="color:var(--navy);">All training videos moved to YouTube (unlisted)</strong> — reliable playback on every device. Last video (Hog-Tie &amp; Small Furniture) migrated to complete the move.</li>
+          <li><strong style="color:var(--navy);">Content updates apply automatically on publish.</strong></li>
+        </ul>
+
+        <p style="margin-top:12px;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);">Onsite eval visual refresh</p>
+        <ul style="margin-top:6px;margin-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--gray);line-height:1.5;">
+          <li><strong style="color:var(--navy);">New close-up reference photo for nearly every eval item</strong> — updated grading instructions, debrief questions in manager view, and a "no stairs on this job" bypass option.</li>
+          <li><strong style="color:var(--navy);">Outstanding item:</strong> live app still showing old onsite eval photos/text — fix built, applies automatically on next publish.</li>
+        </ul>
+      </div>
+    </div>
 
     <div class="cl-entry">
       <div class="cl-date">6/27–6/29/2026</div>
@@ -1233,7 +1274,7 @@
 
     <div class="q-item">
       <div class="q-num">2</div>
-      <div class="q-text"><strong>Videos.</strong> Every curriculum item already has a <code>videoUrl</code> slot built and rendered. What's the plan for Austin L's training library — unlisted YouTube, Google Drive, or hosted elsewhere? And which specific videos are the training set? Needs a quick sync with Austin L.</div>
+      <div class="q-text"><strong>Videos.</strong> Every curriculum item already has a <code>videoUrl</code> slot built and rendered. What's the plan for Austin L's training library — unlisted YouTube, Google Drive, or hosted elsewhere? And which specific videos are the training set? Needs a quick sync with Austin L. <em style="color:var(--teal);">✓ Resolved 7/1: All training videos moved to YouTube (unlisted). Reliable playback confirmed on all devices including Android/mobile.</em></div>
     </div>
 
     <div class="q-item">
@@ -1302,7 +1343,7 @@
 
     <div class="todo-item">
       <div class="todo-check"></div>
-      <div><strong>Hardcoded manager 1:1 checkpoints</strong><br>Build in scheduled 1:1 checkpoints with managers that lock training progress until the meeting is marked complete by both parties.</div>
+      <div><strong>Hardcoded manager 1:1 checkpoints</strong> <em style="color:var(--teal);font-size:.8rem;">✓ Done 7/1</em><br>Recurring 1:1 check-ins at weeks 1, 2, 4, and 8 with manager review queue and in-app notifications. 7-day inactivity lock requires coaching check-in to unlock.</div>
     </div>
 
     <div class="todo-item">
@@ -1367,7 +1408,7 @@
   ══════════════════════════════════════════════ -->
   <div class="foot">
     <span>One shared version. Mike collaborates here once deployed.</span>
-    <span>Last updated 6/29/2026 &nbsp;·&nbsp; Internal only — not for public distribution</span>
+    <span>Last updated 7/1/2026 &nbsp;·&nbsp; Internal only — not for public distribution</span>
   </div>
 
 </div>
